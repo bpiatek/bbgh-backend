@@ -9,4 +9,5 @@ public class BbghBackendApplication {
   public static void main(String[] args) {
     SpringApplication.run(BbghBackendApplication.class, args);
   }
+
 }
