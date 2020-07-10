@@ -1,4 +1,4 @@
-package com.github.bpiatek.bbghbackend.ninetyminutes;
+package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -12,13 +12,22 @@ import org.springframework.stereotype.Service;
  * Created by Bartosz Piatek on 10/07/2020
  */
 @Service
-public class NinetyMinutesCrawlerController {
+class NinetyMinutesCrawlerController {
+
   public static final String NINETY_MINUTES_URL = "http://www.90minut.pl/";
 
-  @Value("${crawler.storage.folder}")
-  private String crawlerTempFolder;
+  private final ArticleCreator articleCreator;
+  private final String crawlerTempFolder;
 
-  public void run90minutesCrawler() throws Exception {
+  NinetyMinutesCrawlerController(
+      ArticleCreator articleCreator,
+      @Value("${crawler.storage.folder}") String crawlerTempFolder
+  ) {
+    this.articleCreator = articleCreator;
+    this.crawlerTempFolder = crawlerTempFolder;
+  }
+
+  void run90minutesCrawler() throws Exception {
     CrawlConfig config = new CrawlConfig();
     config.setCrawlStorageFolder(crawlerTempFolder + "90minut");
     config.setPolitenessDelay(1000);
@@ -30,8 +39,8 @@ public class NinetyMinutesCrawlerController {
 
     int numberOfCrawlers = 2;
 
-    CrawlController.WebCrawlerFactory<NinetyMinutesCrawler> factory = NinetyMinutesCrawler::new;
+    CrawlController.WebCrawlerFactory<NinetyMinutesCrawler> factory = () -> new NinetyMinutesCrawler(articleCreator);
 
-    controller.start(factory, numberOfCrawlers);
+    controller.startNonBlocking(factory, numberOfCrawlers);
   }
 }
