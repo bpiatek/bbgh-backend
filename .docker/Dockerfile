@@ -6,4 +6,6 @@ RUN apt-get update \
    && curl -sL https://deb.nodesource.com/setup_13.x | bash - \
    && apt-get install -y nodejs
 
+RUN apt-get install maven -y
+
 ENTRYPOINT /bin/bash
