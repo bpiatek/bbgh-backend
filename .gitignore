@@ -13,3 +13,5 @@ mvnw
 *.iws
 *.iml
 *.ipr
+
+!.idea/runConfigurations/app_debug_listen.xml
