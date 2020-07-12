@@ -57,9 +57,9 @@ class TextToLocalDateTimeParser {
       case "kwietnia":
         return 4;
       case "maja":
-        return 6;
+        return 5;
       case "czerwca":
-        return 1;
+        return 6;
       case "lipca":
         return 7;
       case "sierpnia":

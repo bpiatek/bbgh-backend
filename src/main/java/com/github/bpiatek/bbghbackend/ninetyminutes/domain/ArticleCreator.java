@@ -23,12 +23,15 @@ class ArticleCreator {
   Article create(Page page, HtmlParseData htmlParseData) {
     final String html = htmlParseData.getHtml();
 
-    return Article.builder()
+    final Article article = Article.builder()
         .url(page.getWebURL().getURL())
         .title(htmlParseData.getTitle())
         .content(articleExtractor.getArticleContentAsText(html))
         .creationDate(articleExtractor.getArticleDateTime(html))
-        .comments(commentsExtractor.getComments(html))
         .build();
+
+    article.setComments(commentsExtractor.getComments(html));
+
+    return article;
   }
 }
