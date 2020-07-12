@@ -6,6 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
@@ -32,9 +34,11 @@ public class Article {
   private List<Comment> comments = new ArrayList<>();
 
   public void setComments(List<Comment> comments) {
-    if(comments != null) {
-      comments.forEach(comment -> comment.setArticle(this));
-      this.comments = comments;
-    }
+    comments.stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList())
+        .forEach(comment -> comment.setArticle(this));
+
+    this.comments = comments;
   }
 }

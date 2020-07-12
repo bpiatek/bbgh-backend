@@ -1,6 +1,6 @@
 create table article (
     id bigint not null auto_increment,
-    content varchar(2048),
+    content varchar(15000),
     creation_date datetime,
     title varchar(512),
     url varchar(512),
@@ -10,7 +10,7 @@ create table article (
 create table comment (
     id bigint not null auto_increment,
     author varchar(255),
-    content varchar(2048),
+    content varchar(10000),
     article_id bigint,
     primary key (id)
 );

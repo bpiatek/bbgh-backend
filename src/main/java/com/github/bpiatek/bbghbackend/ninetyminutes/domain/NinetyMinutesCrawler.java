@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import static com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesCrawlerController.NINETY_MINUTES_URL;
 
+import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
 import com.github.bpiatek.bbghbackend.model.Article;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -18,11 +19,11 @@ import java.util.regex.Pattern;
 class NinetyMinutesCrawler extends WebCrawler {
 
   private final ArticleCreator articleCreator;
-  private final NinetyMinutesArticleRepository articleRepository;
+  private final ArticleRepository articleRepository;
 
   NinetyMinutesCrawler(
       ArticleCreator articleCreator,
-      NinetyMinutesArticleRepository articleRepository
+      ArticleRepository articleRepository
   ) {
     this.articleCreator = articleCreator;
     this.articleRepository = articleRepository;
