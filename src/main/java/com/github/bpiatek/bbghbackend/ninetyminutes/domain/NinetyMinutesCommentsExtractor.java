@@ -6,7 +6,6 @@ import static org.jsoup.Jsoup.parse;
 import com.github.bpiatek.bbghbackend.model.Comment;
 import com.github.bpiatek.bbghbackend.model.CommentHtmlExtractor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

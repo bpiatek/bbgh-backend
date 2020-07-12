@@ -35,8 +35,6 @@ class NinetyMinutesCrawlerController {
     CrawlConfig config = new CrawlConfig();
     config.setCrawlStorageFolder(crawlerTempFolder + "90minut");
     config.setPolitenessDelay(1000);
-    config.setMaxDepthOfCrawling(-1);
-    config.setMaxPagesToFetch(-1);
     final PageFetcher pageFetcher = new PageFetcher(config);
     RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
     RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
