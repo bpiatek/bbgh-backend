@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.model;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,10 +12,19 @@ import java.util.List;
 @Builder
 @ToString
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
 public class Article {
-  private String url;
-  private String title;
-  private LocalDateTime creationDate;
-  private String content;
-  private List<Comment> comments;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+    private String url;
+    private String title;
+    private LocalDateTime creationDate;
+    private String content;
+    @Transient
+    private List<Comment> comments;
+
+
 }

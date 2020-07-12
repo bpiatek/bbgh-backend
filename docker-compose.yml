@@ -1,33 +1,29 @@
-version: "3.1"
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3.7'
 services:
-    java:
-        container_name: java_app
-        build: .docker/
-        working_dir: /application
-        volumes:
-            - .:/application
-        read_only: false
-        privileged: true
-        tty: true
-    webserver:
-        container_name: web_app
-        image: nginx
-        volumes:
-            - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-            - .:/var/www/html
+    app:
+        build:
+            context: .
+            dockerfile: .docker/app/Dockerfile
         ports:
-           - 8080:80
-        restart: always
+            - "${APP_PORT:-8080}:8080"
         depends_on:
-            - java
-            - database
-    database:
-        container_name: db_app
-        command: --default-authentication-plugin=mysql_native_password
-        restart: always
-        image: mysql:8.0.17
+            - db
         environment:
-          MYSQL_ROOT_PASSWORD: 123321 
-          MYSQL_DATABASE: testapp
+            SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bbgh?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+            SPRING_DATASOURCE_USERNAME: bbgh
+            SPRING_DATASOURCE_PASSWORD: bbgh
+        command: java -jar /app.jar
+    db:
+        image: mysql
         ports:
-          - "3306:3306"
+            - "${DB_PORT:-3307}:3306"
+        environment:
+            MYSQL_DATABASE: bbgh
+            MYSQL_USER: bbgh
+            MYSQL_PASSWORD: bbgh
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - db-data:/var/lib/mysql
+volumes:
+    db-data:
