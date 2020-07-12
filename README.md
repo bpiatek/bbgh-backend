@@ -28,17 +28,17 @@ docker-compose exec app /bin/ash
 docker-compose down -v
 ```
 
-### Integration with Intellij IDEA \
-##### running \
+### Integration with Intellij IDEA
+##### running 
 Open docker-compose.yml and run `services`
 
-##### building before run \
-Edit `docker-compose.yml: Compose Deployment` configuration (it will show up after first run) and add 'Before launch' goal `Run maven goal` and choose `install`
+##### building before run
+Edit `docker-compose.yml: Compose Deployment` configuration (it will show up after first run) and add `Before launch` goal `Run maven goal` and choose `install`
 
 
-### Running without docker \
-##### setting environment \
+### Running without docker
+##### setting environment
 
 Edit `BbghBackendApplication` and set `Environment variables` in `Environment` section.
-You can copy paste this and change credentials:\
+You can copy paste this and change credentials:
 > SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/bbgh?createDatabaseIfNotExist=true&serverTimezone=UTC;SPRING_DATASOURCE_USERNAME=<username>;SPRING_DATASOURCE_PASSWORD=<password>
