@@ -29,7 +29,7 @@ class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
       if (isComment(element)) {
         final String author = getAuthor(element);
         final String commentContent = getCommentContent(html, author);
-        final Comment comment = new Comment( author, commentContent);
+        final Comment comment = new Comment(author, commentContent);
         comments.add(comment);
       }
     }

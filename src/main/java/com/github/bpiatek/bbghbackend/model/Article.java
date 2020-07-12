@@ -25,6 +25,4 @@ public class Article {
     private String content;
     @Transient
     private List<Comment> comments;
-
-
 }
