@@ -1,28 +1,44 @@
 package com.github.bpiatek.bbghbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.persistence.*;
 
 /**
  * Created by Bartosz Piatek on 10/07/2020
  */
-@Builder
-@ToString
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    private String url;
-    private String title;
-    private LocalDateTime creationDate;
-    private String content;
-    @Transient
-    private List<Comment> comments;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  private String url;
+  private String title;
+  private LocalDateTime creationDate;
+  private String content;
+
+  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  @JsonIgnore
+  private List<Comment> comments = new ArrayList<>();
+
+  public void setComments(List<Comment> comments) {
+    comments.stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList())
+        .forEach(comment -> comment.setArticle(this));
+
+    this.comments = comments;
+  }
 }

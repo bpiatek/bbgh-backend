@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import static com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesCrawlerController.NINETY_MINUTES_URL;
 
+import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
 import com.github.bpiatek.bbghbackend.model.Article;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -18,9 +19,14 @@ import java.util.regex.Pattern;
 class NinetyMinutesCrawler extends WebCrawler {
 
   private final ArticleCreator articleCreator;
+  private final ArticleRepository articleRepository;
 
-  NinetyMinutesCrawler(ArticleCreator articleCreator) {
+  NinetyMinutesCrawler(
+      ArticleCreator articleCreator,
+      ArticleRepository articleRepository
+  ) {
     this.articleCreator = articleCreator;
+    this.articleRepository = articleRepository;
   }
 
   private static final Pattern FILTERS = Pattern.compile(
@@ -45,20 +51,8 @@ class NinetyMinutesCrawler extends WebCrawler {
 
     HtmlParseData parseData = (HtmlParseData) page.getParseData();
     final Article article = articleCreator.create(page, parseData);
-    prettyPrintArticle(article);
-  }
 
-  private void prettyPrintArticle(Article article) {
-    System.out.println("****************************");
-    System.out.println("URL: " + article.getUrl());
-    System.out.println("TYTUŁ: " + article.getTitle());
-    System.out.println("DODANIA: " + article.getCreationDate());
-    System.out.println("TREŚC: " + article.getContent());
-
-    System.out.println(("KOMENTARZE: "));
-    article.getComments().forEach(c -> System.out.println("autor: " + c.getAuthor() + "\nkomentarz: " + c.getContent() + "\n"));
-
-    System.out.println("\n\n\n");
+    articleRepository.save(article);
   }
 
   private boolean isMainPage(Page page) {
