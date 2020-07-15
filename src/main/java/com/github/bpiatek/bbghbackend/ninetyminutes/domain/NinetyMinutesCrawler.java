@@ -53,7 +53,8 @@ class NinetyMinutesCrawler extends WebCrawler {
       log.info("News details visited: {}", url);
       HtmlParseData parseData = (HtmlParseData) page.getParseData();
       final Article article = articleCreator.create(page, parseData);
-      articleRepository.save(article);
+      final Article savedArticle = articleRepository.save(article);
+      log.info("Article with ID: {} form portal {} saved", savedArticle.getId(), NINETY_MINUTES_URL);
     }
 
     log.debug("Page dismissed: {}", url);

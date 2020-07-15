@@ -5,6 +5,7 @@ import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.HTML_
 import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.readHtmlTestFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,7 @@ class NinetyMinutesArticleExtractorTest {
   private NinetyMinutesArticleExtractor articleExtractor;
 
   @Test
-  public void shouldCorrectlyParseDate() {
+  void shouldCorrectlyParseDate() {
     // given
     final String html = readHtmlTestFile(HTML_EXAMPLE_FILE_1);
     final LocalDateTime expectedDate = LocalDateTime.of(2020, 7, 3, 19, 54, 19);
@@ -37,19 +38,21 @@ class NinetyMinutesArticleExtractorTest {
   }
 
   @Test
-  public void shouldCorrectlyParseArticleContentFromFile1() {
+  void shouldCorrectlyParseArticleContentFromFile1() {
     // given
     final String html = readHtmlTestFile(HTML_EXAMPLE_FILE_1);
 
     // when
     final String actualContent = articleExtractor.getArticleContentAsText(html);
     // then
-    assertThat(actualContent).contains("W meczu 34. kolejki PKO Ekstraklasy");
-    assertThat(actualContent).doesNotContain("<b>W meczu 34. kolejki PKO Ekstraklasy");
+    SoftAssertions articleBundle = new SoftAssertions();
+    articleBundle.assertThat(actualContent).contains("W meczu 34. kolejki PKO Ekstraklasy");
+    articleBundle.assertThat(actualContent).doesNotContain("<b>W meczu 34. kolejki PKO Ekstraklasy");
+    articleBundle.assertAll();
   }
 
   @Test
-  public void shouldCorrectlyParseArticleContentFromFile2() {
+  void shouldCorrectlyParseArticleContentFromFile2() {
     // given
     final String html = readHtmlTestFile(HTML_EXAMPLE_FILE_2);
 
@@ -57,7 +60,9 @@ class NinetyMinutesArticleExtractorTest {
     final String actualContent = articleExtractor.getArticleContentAsText(html);
 
     // then
-    assertThat(actualContent).contains("Mladenović ma na koncie dziesięć występów w reprezentacji Serbii.");
-    assertThat(actualContent).doesNotContain("Mladenović ma na koncie dziesięć występów w reprezentacji Serbii.<br>");
+    SoftAssertions articleBundle = new SoftAssertions();
+    articleBundle.assertThat(actualContent).contains("Mladenović ma na koncie dziesięć występów w reprezentacji Serbii.");
+    articleBundle.assertThat(actualContent).doesNotContain("Mladenović ma na koncie dziesięć występów w reprezentacji Serbii.<br>");
+    articleBundle.assertAll();
   }
 }
