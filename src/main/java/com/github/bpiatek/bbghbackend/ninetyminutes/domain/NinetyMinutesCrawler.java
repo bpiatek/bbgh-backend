@@ -17,7 +17,8 @@ import java.util.regex.Pattern;
  */
 @Log4j2
 class NinetyMinutesCrawler extends WebCrawler {
-  private static final String NEWS_URL_TEMPLATE = "http://www.90minut.pl/news/";
+  private static final String NEWS_URL_TEMPLATE      = "http://www.90minut.pl/news/";
+  private static final String NEWS_LIST_URL_TEMPLATE = "http://www.90minut.pl/news.php?"; // www.90minut.pl is another great page written in PHP.
 
   private final ArticleCreator articleCreator;
   private final ArticleRepository articleRepository;
@@ -37,25 +38,32 @@ class NinetyMinutesCrawler extends WebCrawler {
   @Override
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
-    return !FILTERS.matcher(href).matches() && href.startsWith("http://www.90minut.pl");
+    return !FILTERS.matcher(href).matches() && (isNewsDetailsUrl(href) || isNewsListUrl(href)) && articleRepository.findByUrl(href).isEmpty();
   }
 
   @Override
   public void visit(Page page) {
     final String url = page.getWebURL().getURL();
-    if (isNotNews(url)) {
-      log.debug("Page dismissed: {}", url);
+    if (isNewsListUrl(url)) {
+      log.debug("News list visited: {}", url);
       return;
     }
 
-    log.debug("Page visited: {}", url);
-    HtmlParseData parseData = (HtmlParseData) page.getParseData();
-    final Article article = articleCreator.create(page, parseData);
+    if (isNewsDetailsUrl(url)) {
+      log.info("News details visited: {}", url);
+      HtmlParseData parseData = (HtmlParseData) page.getParseData();
+      final Article article = articleCreator.create(page, parseData);
+      articleRepository.save(article);
+    }
 
-    articleRepository.save(article);
+    log.debug("Page dismissed: {}", url);
   }
 
-  private boolean isNotNews(String url) {
-    return NINETY_MINUTES_URL.equals(url) || !url.startsWith(NEWS_URL_TEMPLATE) ;
+  private boolean isNewsDetailsUrl(String url) {
+    return url.startsWith(NEWS_URL_TEMPLATE);
+  }
+
+  private boolean isNewsListUrl(String url) {
+    return url.startsWith(NEWS_LIST_URL_TEMPLATE);
   }
 }
