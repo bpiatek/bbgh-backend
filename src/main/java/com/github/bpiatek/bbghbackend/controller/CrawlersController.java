@@ -6,6 +6,7 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_500_Internal_Server_Error;
 import com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesFacade;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ class CrawlersController {
   ResponseEntity<Void> runCrawler() {
     try {
       facade.runCrawler();
+      log.info("Crawler for portal 90minut.pl started manually.");
       return ResponseEntity.accepted().build();
     } catch (Exception e) {
       log.warn(e.getMessage());

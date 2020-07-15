@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  */
 @Log4j2
 class NinetyMinutesCrawler extends WebCrawler {
+  private static final String NEWS_URL_TEMPLATE = "http://www.90minut.pl/news/";
 
   private final ArticleCreator articleCreator;
   private final ArticleRepository articleRepository;
@@ -36,26 +37,25 @@ class NinetyMinutesCrawler extends WebCrawler {
   @Override
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
-    if (FILTERS.matcher(href).matches()) {
-      return false;
-    }
-
-    return href.startsWith("http://www.90minut.pl/news/");
+    return !FILTERS.matcher(href).matches() && href.startsWith("http://www.90minut.pl");
   }
 
   @Override
   public void visit(Page page) {
-    if (isMainPage(page)) {
+    final String url = page.getWebURL().getURL();
+    if (isNotNews(url)) {
+      log.debug("Page dismissed: {}", url);
       return;
     }
 
+    log.debug("Page visited: {}", url);
     HtmlParseData parseData = (HtmlParseData) page.getParseData();
     final Article article = articleCreator.create(page, parseData);
 
     articleRepository.save(article);
   }
 
-  private boolean isMainPage(Page page) {
-    return NINETY_MINUTES_URL.equals(page.getWebURL().getURL());
+  private boolean isNotNews(String url) {
+    return NINETY_MINUTES_URL.equals(url) || !url.startsWith(NEWS_URL_TEMPLATE) ;
   }
 }
