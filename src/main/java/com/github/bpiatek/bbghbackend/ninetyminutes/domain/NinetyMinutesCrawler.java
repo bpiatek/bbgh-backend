@@ -37,14 +37,14 @@ class NinetyMinutesCrawler extends WebCrawler {
   @Override
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
-    return !FILTERS.matcher(href).matches() && href.startsWith("http://www.90minut.pl");
+    return !FILTERS.matcher(href).matches() && href.startsWith(NINETY_MINUTES_URL);
   }
 
   @Override
   public void visit(Page page) {
     final String url = page.getWebURL().getURL();
     if (isNotNews(url)) {
-      log.debug("Page dismissed: {}", url);
+      log.info("Page URL: {} for portal {} dismissed", url, NINETY_MINUTES_URL);
       return;
     }
 
@@ -52,7 +52,8 @@ class NinetyMinutesCrawler extends WebCrawler {
     HtmlParseData parseData = (HtmlParseData) page.getParseData();
     final Article article = articleCreator.create(page, parseData);
 
-    articleRepository.save(article);
+    final Article savedArticle = articleRepository.save(article);
+    log.info("Article with ID: {} form portal {} saved", savedArticle.getId(), NINETY_MINUTES_URL);
   }
 
   private boolean isNotNews(String url) {

@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,12 @@ import java.util.List;
 @Slf4j
 @Service
 class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
+
+  private final TextToLocalDateTimeParser localDateTimeParser;
+
+  NinetyMinutesCommentsExtractor(TextToLocalDateTimeParser localDateTimeParser) {
+    this.localDateTimeParser = localDateTimeParser;
+  }
 
   @Override
   public List<Comment> getComments(String html) {
@@ -43,8 +50,11 @@ class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
   private Comment extractSingleComment(List<Comment> comments, String html, String author) {
     final int startingPoint = commentStartingPoint(html, author);
     try {
-      String firstCommentContentForAuthor = getFirstCommentContentForAuthor(html, startingPoint);
-      Comment firstComment = new Comment(author, firstCommentContentForAuthor);
+      final String possibleComment = html.substring(startingPoint);
+      String firstCommentContentForAuthor = getFirstCommentContentForAuthor(possibleComment);
+      LocalDateTime commentDate = getCommentDate(possibleComment);
+
+      Comment firstComment = new Comment(author, firstCommentContentForAuthor, commentDate);
       if(comments.contains(firstComment)) {
         return searchForCorrectComment(firstCommentContentForAuthor.substring(0,20), author, html);
       } else {
@@ -71,11 +81,22 @@ class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
       );
     }
 
-    return new Comment(author, nextCommentContent);
+    final LocalDateTime commentDate = getCommentDate(newPossibleComment);
+    return new Comment(author, nextCommentContent, commentDate);
   }
 
-  private String getFirstCommentContentForAuthor(String html, int startingPoint) {
-    final String possibleComment = html.substring(startingPoint);
+  private LocalDateTime getCommentDate(String possibleComment) {
+    final String dateAsString = extractDateAsString(possibleComment);
+    return localDateTimeParser.parse(dateAsString);
+  }
+
+  private String extractDateAsString(String possibleComment) {
+    final Document document = parse(possibleComment);
+    final String node = document.childNode(0).childNode(1).childNode(1).toString();
+    return node.substring(node.indexOf("-") + 2, node.lastIndexOf("-") - 1);
+  }
+
+  private String getFirstCommentContentForAuthor(String possibleComment) {
     return extractCommentContent(possibleComment);
   }
 
