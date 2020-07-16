@@ -46,7 +46,7 @@ class NinetyMinutesCrawler extends WebCrawler {
     if (isNotNews(url)) {
       log.info("Page URL: {} for portal {} dismissed", url, NINETY_MINUTES_URL);
       return;
-    }
+    } 
 
     log.debug("Page visited: {}", url);
     HtmlParseData parseData = (HtmlParseData) page.getParseData();
