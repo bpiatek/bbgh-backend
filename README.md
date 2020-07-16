@@ -41,4 +41,4 @@ Edit `docker-compose.yml: Compose Deployment` configuration (it will show up aft
 
 Edit `BbghBackendApplication` and set `Environment variables` in `Environment` section.
 You can copy paste this and change credentials:
-> SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/bbgh?createDatabaseIfNotExist=true&serverTimezone=UTC;SPRING_DATASOURCE_USERNAME=<username>;SPRING_DATASOURCE_PASSWORD=<password>
+> SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/bbgh?createDatabaseIfNotExist=true&serverTimezone=UTC;SPRING_DATASOURCE_USERNAME=<username>;SPRING_DATASOURCE_PASSWORD=<password>.
