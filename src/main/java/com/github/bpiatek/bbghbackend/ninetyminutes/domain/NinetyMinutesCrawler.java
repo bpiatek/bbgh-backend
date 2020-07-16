@@ -46,7 +46,6 @@ class NinetyMinutesCrawler extends WebCrawler {
     final String url = page.getWebURL().getURL();
     if (isNewsListUrl(url)) {
       log.debug("News list visited: {}", url);
-      return;
     }
 
     if (isNewsDetailsUrl(url)) {
