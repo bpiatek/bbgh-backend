@@ -1,67 +1,71 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
+import static org.apache.commons.text.StringEscapeUtils.unescapeHtml4;
+import static org.jsoup.Jsoup.parse;
+
 import com.github.bpiatek.bbghbackend.model.Comment;
 import com.github.bpiatek.bbghbackend.model.CommentHtmlExtractor;
-import org.jsoup.Jsoup;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Bartosz Piatek on 10/07/2020
  */
+@Slf4j
 @Service
 class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
-  private static final int MAX_COMMENT_LENGTH = 2000;
+
+  private final TextToLocalDateTimeParser localDateTimeParser;
+
+  private static final Pattern PATTERN = Pattern.compile("<a class=\"main\">(?<author>[^<]*)</a> - (?<date>.*?) - (?<authorHost>.*?)<br>\n(?<content>.*?)\n<p", Pattern.DOTALL);
+  private static final int PATTERN_GROUPS_COUNT = 4;
+
+  NinetyMinutesCommentsExtractor(TextToLocalDateTimeParser localDateTimeParser) {
+    this.localDateTimeParser = localDateTimeParser;
+  }
 
   @Override
   public List<Comment> getComments(String html) {
+    Matcher matcher = PATTERN.matcher(html);
     List<Comment> comments = new ArrayList<>();
 
-    final Document document = Jsoup.parse(html);
-    final Elements elements = document.select("a");
+    while (matcher.find()) {
+      if (matcher.groupCount() == PATTERN_GROUPS_COUNT) {
 
-    for (Element element : elements) {
-      if (isComment(element)) {
-        final String author = getAuthor(element);
-        final String commentContent = getCommentContent(html, author);
-        final Comment comment = new Comment(author, commentContent);
-        comments.add(comment);
+        Comment comment = Comment.builder()
+            .author(matcher.group("author"))
+            .content(matcher.group("content"))
+            .dateAdded(localDateTimeParser.parse(matcher.group("date")))
+            .build();
+
+        if (!containsComment(comments, comment)) {
+          comments.add(comment);
+        }
       }
     }
 
     return comments;
   }
 
-  private String getCommentContent(String html, String author) {
-    final int startingPoint = commentStartingPoint(html, author);
-    try {
-      final String possibleComment = html.substring(startingPoint, startingPoint + MAX_COMMENT_LENGTH);
-      final int commentStartIndex = possibleComment.indexOf("<br>") + 4;
-      final int commentEndIndex = possibleComment.indexOf("<p");
-      return cleanCommentFromHtmlTags(possibleComment.substring(commentStartIndex, commentEndIndex).trim());
-    } catch (StringIndexOutOfBoundsException e) {
-      return "";
+  private boolean containsComment(List<Comment> comments, Comment comment) {
+    for(Comment o : comments) {
+      if (
+          o.getAuthor().equals(comment.getAuthor()) &&
+          o.getContent().equals(comment.getContent()) &&
+          o.getDateAdded().equals(comment.getDateAdded())
+      ) {
+        return true;
+      }
     }
-  }
-
-  private String cleanCommentFromHtmlTags(String comment) {
-    return Jsoup.parse(comment).text();
-  }
-
-  private int commentStartingPoint(String html, String author) {
-    return html.indexOf("<a class=\"main\">" + author);
-  }
-
-  private String getAuthor(Element element) {
-    return element.childNode(0).toString();
-  }
-
-  private boolean isComment(Element element) {
-    return "main".equals(element.className()) && !(element.attributes().hasKey("href"));
+    return false;
   }
 }

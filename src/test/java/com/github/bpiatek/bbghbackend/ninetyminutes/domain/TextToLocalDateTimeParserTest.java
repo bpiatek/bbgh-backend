@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 class TextToLocalDateTimeParserTest {
 
   @Test
-  public void shouldCorrectlyParseStringToDate() {
+  void shouldCorrectlyParseStringToDate() {
     // given
     String textDate = "3 lipca 2020, 19:54:19 - dagazka";
 

@@ -1,10 +1,12 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.utils;
 
-import java.io.IOException;
+import lombok.SneakyThrows;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 /**
  * Created by Bartosz Piatek on 10/07/2020
@@ -12,13 +14,15 @@ import java.util.stream.Stream;
 public class TestUtils {
   public static final String HTML_EXAMPLE_FILE_1 = "src/test/resources/articles/htmlExample1.html";
   public static final String HTML_EXAMPLE_FILE_2 = "src/test/resources/articles/htmlExample2.html";
+  public static final String HTML_EXAMPLE_FILE_3 = "src/test/resources/articles/htmlExample3.html";
 
+  @SneakyThrows
   public static String readHtmlTestFile(String path) {
+    Charset ch = StandardCharsets.UTF_8;
     StringBuilder htmlBuilder = new StringBuilder();
-    try (Stream<String> lines = Files.lines(Paths.get(path), StandardCharsets.UTF_8)) {
-      lines.forEach(l -> htmlBuilder.append(l).append("\n"));
-    } catch (IOException e) {
-      e.printStackTrace();
+    try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), ch))) {
+      reader.lines().
+          forEach(l -> htmlBuilder.append(l).append("\n"));
     }
 
     return htmlBuilder.toString();

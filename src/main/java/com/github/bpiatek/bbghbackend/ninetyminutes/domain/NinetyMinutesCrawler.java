@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import static com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesCrawlerController.NINETY_MINUTES_URL;
 
+import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
 import com.github.bpiatek.bbghbackend.model.Article;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -16,11 +17,18 @@ import java.util.regex.Pattern;
  */
 @Log4j2
 class NinetyMinutesCrawler extends WebCrawler {
+  private static final String NEWS_URL_TEMPLATE      = "http://www.90minut.pl/news/";
+  private static final String NEWS_LIST_URL_TEMPLATE = "http://www.90minut.pl/news.php?"; // www.90minut.pl is another great page written in PHP.
 
   private final ArticleCreator articleCreator;
+  private final ArticleRepository articleRepository;
 
-  NinetyMinutesCrawler(ArticleCreator articleCreator) {
+  NinetyMinutesCrawler(
+      ArticleCreator articleCreator,
+      ArticleRepository articleRepository
+  ) {
     this.articleCreator = articleCreator;
+    this.articleRepository = articleRepository;
   }
 
   private static final Pattern FILTERS = Pattern.compile(
@@ -30,38 +38,32 @@ class NinetyMinutesCrawler extends WebCrawler {
   @Override
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
-    if (FILTERS.matcher(href).matches()) {
-      return false;
-    }
-
-    return href.startsWith("http://www.90minut.pl/news/");
+    return !FILTERS.matcher(href).matches() && (isNewsDetailsUrl(href) || isNewsListUrl(href)) && articleRepository.findByUrl(href).isEmpty();
   }
 
   @Override
   public void visit(Page page) {
-    if (isMainPage(page)) {
-      return;
+    final String url = page.getWebURL().getURL();
+    if (isNewsListUrl(url)) {
+      log.debug("News list visited: {}", url);
     }
 
-    HtmlParseData parseData = (HtmlParseData) page.getParseData();
-    final Article article = articleCreator.create(page, parseData);
-    prettyPrintArticle(article);
+    if (isNewsDetailsUrl(url)) {
+      log.info("News details visited: {}", url);
+      HtmlParseData parseData = (HtmlParseData) page.getParseData();
+      final Article article = articleCreator.create(page, parseData);
+      final Article savedArticle = articleRepository.save(article);
+      log.info("Article with ID: {} from portal {} saved", savedArticle.getId(), NINETY_MINUTES_URL);
+    }
+
+    log.debug("Page dismissed: {}", url);
   }
 
-  private void prettyPrintArticle(Article article) {
-    System.out.println("****************************");
-    System.out.println("URL: " + article.getUrl());
-    System.out.println("TYTUŁ: " + article.getTitle());
-    System.out.println("DODANIA: " + article.getCreationDate());
-    System.out.println("TREŚC: " + article.getContent());
-
-    System.out.println(("KOMENTARZE: "));
-    article.getComments().forEach(c -> System.out.println("autor: " + c.getAuthor() + "\nkomentarz: " + c.getContent() + "\n"));
-
-    System.out.println("\n\n\n");
+  private boolean isNewsDetailsUrl(String url) {
+    return url.startsWith(NEWS_URL_TEMPLATE);
   }
 
-  private boolean isMainPage(Page page) {
-    return NINETY_MINUTES_URL.equals(page.getWebURL().getURL());
+  private boolean isNewsListUrl(String url) {
+    return url.startsWith(NEWS_LIST_URL_TEMPLATE);
   }
 }

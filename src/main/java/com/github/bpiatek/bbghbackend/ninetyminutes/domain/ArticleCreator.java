@@ -1,9 +1,12 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import com.github.bpiatek.bbghbackend.model.Article;
+import com.github.bpiatek.bbghbackend.model.Comment;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by Bartosz Piatek on 10/07/2020
@@ -23,12 +26,16 @@ class ArticleCreator {
   Article create(Page page, HtmlParseData htmlParseData) {
     final String html = htmlParseData.getHtml();
 
-    return Article.builder()
+    final Article article = Article.builder()
         .url(page.getWebURL().getURL())
         .title(htmlParseData.getTitle())
         .content(articleExtractor.getArticleContentAsText(html))
         .creationDate(articleExtractor.getArticleDateTime(html))
-        .comments(commentsExtractor.getComments(html))
         .build();
+
+    final List<Comment> comments = commentsExtractor.getComments(html);
+    article.setComments(comments);
+
+    return article;
   }
 }

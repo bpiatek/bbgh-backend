@@ -13,5 +13,7 @@ mvnw
 *.iws
 *.iml
 *.ipr
-
+logs/
+LOG_PATH_IS_UNDEFINED/
+src/test/resources/logs/
 !.idea/runConfigurations/app_debug_listen.xml

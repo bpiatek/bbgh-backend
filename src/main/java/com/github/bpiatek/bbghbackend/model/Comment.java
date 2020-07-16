@@ -1,23 +1,46 @@
 package com.github.bpiatek.bbghbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.time.LocalDateTime;
+
+import javax.persistence.*;
 
 /**
  * Created by Bartosz Piatek on 10/07/2020
  */
-@EqualsAndHashCode
-@NoArgsConstructor
+@Entity
+@Data
 @AllArgsConstructor
-@Getter
 @Builder
-@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment {
-    private String author;
-    //  private LocalDateTime dateAdded;
-    private String content;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  private String author;
+  private LocalDateTime dateAdded;
+  private String content;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
+  private Article article;
+
+  public Comment(String author, String content, LocalDateTime dateAdded) {
+    this.author = author;
+    this.content = content;
+    this.dateAdded = dateAdded;
+  }
+
+  @Override
+  public String toString() {
+    return "Comment{" +
+           "id=" + id +
+           ", author='" + author + '\'' +
+           ", content='" + content + '\'' +
+           ", dateAdded='" + dateAdded + '\'' +
+           '}';
+  }
 }

@@ -1,0 +1,35 @@
+crawler:
+  storage:
+    folder: /tmp/crawler4j/
+
+spring:
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+logging:
+  file:
+    path: "/var/log/bbgh-backend/"
+
+---
+
+spring:
+  profiles: local
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/testapp?createDatabaseIfNotExist=true&serverTimezone=UTC&characterEncoding=UTF-8
+SPRING_DATASOURCE_USERNAME: bbgh
+SPRING_DATASOURCE_PASSWORD: 123321
+
+logging:
+  file:
+    path: "logs"
