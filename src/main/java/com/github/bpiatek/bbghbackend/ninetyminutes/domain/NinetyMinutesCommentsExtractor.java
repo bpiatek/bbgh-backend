@@ -56,8 +56,8 @@ class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
     return comments;
   }
 
-  private static boolean containsComment(List<Comment> c, Comment comment) {
-    for(Comment o : c) {
+  private boolean containsComment(List<Comment> comments, Comment comment) {
+    for(Comment o : comments) {
       if (
           o.getAuthor().equals(comment.getAuthor()) &&
           o.getContent().equals(comment.getContent()) &&
