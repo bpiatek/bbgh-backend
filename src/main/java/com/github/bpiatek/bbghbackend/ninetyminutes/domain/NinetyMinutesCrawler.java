@@ -38,7 +38,7 @@ class NinetyMinutesCrawler extends WebCrawler {
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
     return !FILTERS.matcher(href).matches() && href.startsWith(NINETY_MINUTES_URL);
-  }
+  } 
 
   @Override
   public void visit(Page page) {
