@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 public class TestUtils {
   public static final String HTML_EXAMPLE_FILE_1 = "src/test/resources/articles/htmlExample1.html";
   public static final String HTML_EXAMPLE_FILE_2 = "src/test/resources/articles/htmlExample2.html";
+  public static final String HTML_EXAMPLE_FILE_3 = "src/test/resources/articles/htmlExample3.html";
 
   @SneakyThrows
   public static String readHtmlTestFile(String path) {
