@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  */
 @Service
 class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
-  private static final int TD_WITH_COMMENT = 15;
+  private static final int TD_WITH_CNTENT = 15;
 
   private final TextToLocalDateTimeParser localDateTimeParser;
 
@@ -43,6 +43,6 @@ class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
   private static Element getArticleContent(String html) {
     final Document document = Jsoup.parse(html);
     final Element table = document.select("table").get(1);
-    return table.select("td").get(TD_WITH_COMMENT);
+    return table.select("td").get(TD_WITH_CNTENT);
   }
 }

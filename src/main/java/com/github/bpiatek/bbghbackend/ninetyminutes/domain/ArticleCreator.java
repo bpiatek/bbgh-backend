@@ -23,7 +23,7 @@ class ArticleCreator {
     this.commentsExtractor = commentsExtractor;
   }
 
-  Article create(Page page, HtmlParseData htmlParseData) {
+  Article createFromPage(Page page, HtmlParseData htmlParseData) {
     final String html = htmlParseData.getHtml();
 
     final Article article = Article.builder()
