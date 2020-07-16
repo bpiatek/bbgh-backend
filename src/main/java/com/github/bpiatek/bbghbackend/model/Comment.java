@@ -3,6 +3,8 @@ package com.github.bpiatek.bbghbackend.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.*;
 
 /**
@@ -19,16 +21,17 @@ public class Comment {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String author;
-//  private LocalDateTime dateAdded;
+  private LocalDateTime dateAdded;
   private String content;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JsonBackReference
   private Article article;
 
-  public Comment(String author, String content) {
+  public Comment(String author, String content, LocalDateTime dateAdded) {
     this.author = author;
     this.content = content;
+    this.dateAdded = dateAdded;
   }
 
   @Override
@@ -37,6 +40,7 @@ public class Comment {
            "id=" + id +
            ", author='" + author + '\'' +
            ", content='" + content + '\'' +
+           ", dateAdded='" + dateAdded + '\'' +
            '}';
   }
 }
