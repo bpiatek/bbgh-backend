@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,6 @@ import java.time.LocalDateTime;
  */
 @Service
 class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
-  private static final int TD_WITH_CNTENT = 15;
 
   private final TextToLocalDateTimeParser localDateTimeParser;
 
@@ -41,8 +41,8 @@ class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
   }
 
   private static Element getArticleContent(String html) {
-    final Document document = Jsoup.parse(html);
-    final Element table = document.select("table").get(1);
-    return table.select("td").get(TD_WITH_CNTENT);
+    final Document document = Jsoup.parse(html); 
+    final Elements blockquote = document.select("blockquote");
+    return blockquote.select("tbody").get(0).select("td").get(0);
   }
 }
