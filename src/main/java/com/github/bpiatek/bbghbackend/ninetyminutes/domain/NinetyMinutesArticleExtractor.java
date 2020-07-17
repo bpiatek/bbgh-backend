@@ -41,7 +41,7 @@ class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
   }
 
   private static Element getArticleContent(String html) {
-    final Document document = Jsoup.parse(html);
+    final Document document = Jsoup.parse(html); 
     final Elements blockquote = document.select("blockquote");
     return blockquote.select("tbody").get(0).select("td").get(0);
   }
