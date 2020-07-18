@@ -17,7 +17,8 @@ import java.util.List;
  */
 @SpringBootTest(classes = {
     TextToLocalDateTimeParser.class,
-    NinetyMinutesCommentsExtractor.class
+    NinetyMinutesCommentsExtractor.class,
+    CommentCreator.class
 })
 class NinetyMinutesCommentsExtractorTest {
 
@@ -68,6 +69,6 @@ class NinetyMinutesCommentsExtractorTest {
     final List<Comment> comments = commentsExtractor.getComments(html);
 
     // then
-    assertThat(comments.size()).isGreaterThan(0);
+    assertThat(comments.size()).isPositive();
   }
 }

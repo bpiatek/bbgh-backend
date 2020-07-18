@@ -1,8 +1,6 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
-import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.HTML_EXAMPLE_FILE_1;
-import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.HTML_EXAMPLE_FILE_2;
-import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.readHtmlTestFile;
+import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.core.api.SoftAssertions;
@@ -64,5 +62,17 @@ class NinetyMinutesArticleExtractorTest {
     articleBundle.assertThat(actualContent).contains("Mladenović ma na koncie dziesięć występów w reprezentacji Serbii.");
     articleBundle.assertThat(actualContent).doesNotContain("Mladenović ma na koncie dziesięć występów w reprezentacji Serbii.<br>");
     articleBundle.assertAll();
+  }
+
+  @Test
+  void shouldCorrectlyExtractArticleWhenNoComments() {
+    // given
+    final String html = readHtmlTestFile(HTML_NO_COMMENTS);
+
+    // when
+    final String actualContent = articleExtractor.getArticleContentAsText(html);
+
+    // then
+    assertThat(actualContent).contains("zaś drugie trzy dni później. Oba");
   }
 }
