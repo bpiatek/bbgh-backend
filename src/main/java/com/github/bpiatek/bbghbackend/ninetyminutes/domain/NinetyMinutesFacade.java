@@ -17,4 +17,8 @@ public class NinetyMinutesFacade {
   public void runCrawler() throws Exception {
     crawlerController.run90minutesCrawler();
   }
+
+  public void stopCrawler() {
+    crawlerController.stop90minutesCrawler();
+  }
 }

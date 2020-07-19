@@ -20,6 +20,7 @@ class NinetyMinutesCrawlerController {
   private final ArticleCreator articleCreator;
   private final ArticleRepository articleRepository;
   private final String crawlerTempFolder;
+  private CrawlController crawlController;
 
   NinetyMinutesCrawlerController(
       ArticleCreator articleCreator,
@@ -38,13 +39,20 @@ class NinetyMinutesCrawlerController {
     final PageFetcher pageFetcher = new PageFetcher(config);
     RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
     RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-    CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-    controller.addSeed(NINETY_MINUTES_URL);
+    crawlController = new CrawlController(config, pageFetcher, robotstxtServer);
+    crawlController.addSeed(NINETY_MINUTES_URL);
 
     int numberOfCrawlers = 1;
 
     CrawlController.WebCrawlerFactory<NinetyMinutesCrawler> factory = () -> new NinetyMinutesCrawler(articleCreator, articleRepository);
 
-    controller.startNonBlocking(factory, numberOfCrawlers);
+    crawlController.startNonBlocking(factory, numberOfCrawlers);
+  }
+
+  void stop90minutesCrawler() {
+    if (crawlController != null) {
+      crawlController.shutdown();
+      crawlController.waitUntilFinish();
+    }
   }
 }
