@@ -6,17 +6,20 @@ import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
 import com.github.bpiatek.bbghbackend.dao.CommentRepository;
 import com.github.bpiatek.bbghbackend.model.Article;
 import com.github.bpiatek.bbghbackend.model.Comment;
+import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * Created by Bartosz Piatek on 12/07/2020
  */
 @Log4j2
 @Api(tags = "Articles and comments controller")
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/api/articles")
 class ArticlesController {
@@ -34,8 +37,9 @@ class ArticlesController {
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all articles"),
   })
+  @ApiPageable
   @GetMapping
-  Page<Article> getAllArticlesPageable(Pageable pageable) {
+  Page<Article> getAllArticlesPageable(@ApiIgnore Pageable pageable) {
     return articleRepository.findAll(pageable);
   }
 
