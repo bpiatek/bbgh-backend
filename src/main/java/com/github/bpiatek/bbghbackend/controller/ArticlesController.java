@@ -47,7 +47,6 @@ class ArticlesController {
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved article by ID"),
   })
-  @ApiPageable
   @GetMapping("{articleId}")
   ResponseEntity<Article> getArticleById(@PathVariable Long articleId) {
     return ResponseEntity.ok().body(articleFacade.findById(articleId));
