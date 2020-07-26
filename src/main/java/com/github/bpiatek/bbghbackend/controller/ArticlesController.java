@@ -43,7 +43,7 @@ class ArticlesController {
     return articleRepository.findAll(pageable);
   }
 
-  @ApiOperation(value = "Run crawler for 90minut.pl")
+  @ApiOperation(value = "Get all comments for given article")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved comments for a given article"),
   })
