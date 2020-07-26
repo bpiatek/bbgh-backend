@@ -1,6 +1,6 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
-import com.github.bpiatek.bbghbackend.model.ArticleHtmlExtractor;
+import com.github.bpiatek.bbghbackend.model.article.ArticleHtmlExtractor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

@@ -1,6 +1,7 @@
-package com.github.bpiatek.bbghbackend.model;
+package com.github.bpiatek.bbghbackend.model.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import lombok.*;
 
 import java.time.LocalDateTime;

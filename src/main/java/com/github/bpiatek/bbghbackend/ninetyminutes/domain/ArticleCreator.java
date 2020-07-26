@@ -1,7 +1,7 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
-import com.github.bpiatek.bbghbackend.model.Article;
-import com.github.bpiatek.bbghbackend.model.Comment;
+import com.github.bpiatek.bbghbackend.model.article.Article;
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import org.springframework.stereotype.Service;

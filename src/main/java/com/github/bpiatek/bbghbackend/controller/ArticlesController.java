@@ -2,15 +2,16 @@ package com.github.bpiatek.bbghbackend.controller;
 
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
-import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
-import com.github.bpiatek.bbghbackend.dao.CommentRepository;
-import com.github.bpiatek.bbghbackend.model.Article;
-import com.github.bpiatek.bbghbackend.model.Comment;
+import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
+import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
+import com.github.bpiatek.bbghbackend.model.article.Article;
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -24,13 +25,12 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping(value = "/api/articles")
 class ArticlesController {
 
-  private final ArticleRepository articleRepository;
-  private final CommentRepository commentRepository;
+  private final ArticleFacade articleFacade;
+  private final CommentFacade commentFacade;
 
-  ArticlesController(ArticleRepository articleRepository,
-                     CommentRepository commentRepository) {
-    this.articleRepository = articleRepository;
-    this.commentRepository = commentRepository;
+  ArticlesController(ArticleFacade articleFacade, CommentFacade commentFacade) {
+    this.articleFacade = articleFacade;
+    this.commentFacade = commentFacade;
   }
 
   @ApiOperation(value = "Get all articles")
@@ -40,7 +40,17 @@ class ArticlesController {
   @ApiPageable
   @GetMapping
   Page<Article> getAllArticlesPageable(@ApiIgnore Pageable pageable) {
-    return articleRepository.findAll(pageable);
+    return articleFacade.findAll(pageable);
+  }
+
+  @ApiOperation(value = "Get article by ID")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved article by ID"),
+  })
+  @ApiPageable
+  @GetMapping("{articleId}")
+  ResponseEntity<Article> getArticleById(@PathVariable Long articleId) {
+    return ResponseEntity.ok().body(articleFacade.findById(articleId));
   }
 
   @ApiOperation(value = "Get all comments for given article")
@@ -50,6 +60,6 @@ class ArticlesController {
   @ApiPageable
   @GetMapping("{articleId}/comments")
   Page<Comment> getAllCommentsForArticlePageable(@PathVariable Long articleId, @ApiIgnore Pageable pageable) {
-    return commentRepository.findByArticleId(articleId, pageable);
+    return commentFacade.findByArticleId(articleId, pageable);
   }
 }

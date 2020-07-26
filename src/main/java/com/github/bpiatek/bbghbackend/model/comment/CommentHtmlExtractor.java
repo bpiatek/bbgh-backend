@@ -1,4 +1,4 @@
-package com.github.bpiatek.bbghbackend.model;
+package com.github.bpiatek.bbghbackend.model.comment;
 
 import java.util.List;
 

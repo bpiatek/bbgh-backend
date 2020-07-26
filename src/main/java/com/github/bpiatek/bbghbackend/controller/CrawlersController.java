@@ -3,7 +3,6 @@ package com.github.bpiatek.bbghbackend.controller;
 import com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesFacade;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +19,10 @@ import static org.mortbay.jetty.HttpStatus.*;
 @RequestMapping(value = "/api/crawlers")
 class CrawlersController {
 
-  private final NinetyMinutesFacade facade;
+  private final NinetyMinutesFacade ninetyMinutesFacade;
 
-  CrawlersController(NinetyMinutesFacade facade) {
-    this.facade = facade;
+  CrawlersController(NinetyMinutesFacade ninetyMinutesFacade) {
+    this.ninetyMinutesFacade = ninetyMinutesFacade;
   }
 
   @ApiOperation(value = "Run crawler for 90minut.pl")
@@ -33,7 +32,7 @@ class CrawlersController {
   @PostMapping("/run/90minutes")
   ResponseEntity<Void> runCrawler() {
     try {
-      facade.runCrawler();
+      ninetyMinutesFacade.runCrawler();
       log.info("Crawler for portal 90minut.pl started manually.");
       return ResponseEntity.accepted().build();
     } catch (Exception e) {
@@ -48,7 +47,7 @@ class CrawlersController {
   })
   @PostMapping("/stop/90minutes")
   ResponseEntity<Void> stopCrawler() {
-    facade.stopCrawler();
+    ninetyMinutesFacade.stopCrawler();
     log.info("Crawler for portal 90minut.pl stopped manually.");
     return ResponseEntity.ok().build();
   }

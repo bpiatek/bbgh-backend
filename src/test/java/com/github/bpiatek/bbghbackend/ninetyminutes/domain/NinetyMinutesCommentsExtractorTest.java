@@ -3,7 +3,7 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 import static com.github.bpiatek.bbghbackend.ninetyminutes.utils.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.bpiatek.bbghbackend.model.Comment;
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
