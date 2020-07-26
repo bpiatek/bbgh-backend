@@ -47,8 +47,9 @@ class ArticlesController {
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved comments for a given article"),
   })
+  @ApiPageable
   @GetMapping("{articleId}/comments")
-  Page<Comment> getAllCommentsForArticlePageable(@PathVariable Long articleId, Pageable pageable) {
+  Page<Comment> getAllCommentsForArticlePageable(@PathVariable Long articleId, @ApiIgnore Pageable pageable) {
     return commentRepository.findByArticleId(articleId, pageable);
   }
 }
