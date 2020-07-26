@@ -1,5 +1,6 @@
 package com.github.bpiatek.bbghbackend.model.comment;
 
+import static com.github.bpiatek.bbghbackend.model.comment.CommentOpinionStatus.NOT_CHECKED;
 import static javax.persistence.EnumType.STRING;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -38,6 +39,7 @@ public class Comment {
     this.author = author;
     this.content = content;
     this.dateAdded = dateAdded;
+    this.commentOpinionStatus = NOT_CHECKED;
   }
 
   @Override
