@@ -1,4 +1,4 @@
-package com.github.bpiatek.bbghbackend.model;
+package com.github.bpiatek.bbghbackend.model.article;
 
 import java.time.LocalDateTime;
 

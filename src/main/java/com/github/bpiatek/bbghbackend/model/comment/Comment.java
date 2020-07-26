@@ -1,6 +1,10 @@
-package com.github.bpiatek.bbghbackend.model;
+package com.github.bpiatek.bbghbackend.model.comment;
+
+import static com.github.bpiatek.bbghbackend.model.comment.CommentOpinionStatus.NOT_CHECKED;
+import static javax.persistence.EnumType.STRING;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.github.bpiatek.bbghbackend.model.article.Article;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +28,9 @@ public class Comment {
   private LocalDateTime dateAdded;
   private String content;
 
+  @Enumerated(STRING)
+  private CommentOpinionStatus commentOpinionStatus;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JsonBackReference
   private Article article;
@@ -32,6 +39,7 @@ public class Comment {
     this.author = author;
     this.content = content;
     this.dateAdded = dateAdded;
+    this.commentOpinionStatus = NOT_CHECKED;
   }
 
   @Override

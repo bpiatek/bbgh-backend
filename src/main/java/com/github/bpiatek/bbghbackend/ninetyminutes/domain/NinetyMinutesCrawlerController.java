@@ -1,6 +1,6 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
-import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
+import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -18,17 +18,17 @@ class NinetyMinutesCrawlerController {
   public static final String NINETY_MINUTES_URL = "http://www.90minut.pl/";
 
   private final ArticleCreator articleCreator;
-  private final ArticleRepository articleRepository;
+  private final ArticleFacade articleFacade;
   private final String crawlerTempFolder;
   private CrawlController crawlController;
 
   NinetyMinutesCrawlerController(
       ArticleCreator articleCreator,
-      ArticleRepository articleRepository,
+      ArticleFacade articleFacade,
       @Value("${crawler.storage.folder}") String crawlerTempFolder
   ) {
     this.articleCreator = articleCreator;
-    this.articleRepository = articleRepository;
+    this.articleFacade = articleFacade;
     this.crawlerTempFolder = crawlerTempFolder;
   }
 
@@ -44,7 +44,7 @@ class NinetyMinutesCrawlerController {
 
     int numberOfCrawlers = 1;
 
-    CrawlController.WebCrawlerFactory<NinetyMinutesCrawler> factory = () -> new NinetyMinutesCrawler(articleCreator, articleRepository);
+    CrawlController.WebCrawlerFactory<NinetyMinutesCrawler> factory = () -> new NinetyMinutesCrawler(articleCreator, articleFacade);
 
     crawlController.startNonBlocking(factory, numberOfCrawlers);
   }

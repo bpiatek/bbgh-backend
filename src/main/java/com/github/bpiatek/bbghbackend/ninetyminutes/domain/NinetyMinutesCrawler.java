@@ -2,8 +2,8 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import static com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesCrawlerController.NINETY_MINUTES_URL;
 
-import com.github.bpiatek.bbghbackend.dao.ArticleRepository;
-import com.github.bpiatek.bbghbackend.model.Article;
+import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
+import com.github.bpiatek.bbghbackend.model.article.Article;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -21,14 +21,11 @@ class NinetyMinutesCrawler extends WebCrawler {
   private static final String NEWS_LIST_URL_TEMPLATE = "http://www.90minut.pl/news.php?"; // www.90minut.pl is another great page written in PHP.
 
   private final ArticleCreator articleCreator;
-  private final ArticleRepository articleRepository;
+  private final ArticleFacade articleFacade;
 
-  NinetyMinutesCrawler(
-      ArticleCreator articleCreator,
-      ArticleRepository articleRepository
-  ) {
+  NinetyMinutesCrawler(ArticleCreator articleCreator, ArticleFacade articleFacade) {
     this.articleCreator = articleCreator;
-    this.articleRepository = articleRepository;
+    this.articleFacade = articleFacade;
   }
 
   private static final Pattern FILTERS = Pattern.compile(
@@ -38,7 +35,7 @@ class NinetyMinutesCrawler extends WebCrawler {
   @Override
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
-    return !FILTERS.matcher(href).matches() && (isNewsDetailsUrl(href) || isNewsListUrl(href)) && articleRepository.findByUrl(href).isEmpty();
+    return !FILTERS.matcher(href).matches() && (isNewsDetailsUrl(href) || isNewsListUrl(href)) && articleFacade.findByUrl(href).isEmpty();
   }
 
   @Override
@@ -52,7 +49,7 @@ class NinetyMinutesCrawler extends WebCrawler {
       log.info("News details visited: {}", url);
       HtmlParseData parseData = (HtmlParseData) page.getParseData();
       final Article article = articleCreator.createFromPage(page, parseData);
-      final Article savedArticle = articleRepository.save(article);
+      final Article savedArticle = articleFacade.save(article);
       log.info("Article with ID: {} from portal {} saved", savedArticle.getId(), NINETY_MINUTES_URL);
     }
 

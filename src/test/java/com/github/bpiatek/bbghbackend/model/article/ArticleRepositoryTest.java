@@ -1,9 +1,8 @@
-package com.github.bpiatek.bbghbackend.dao;
+package com.github.bpiatek.bbghbackend.model.article;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.bpiatek.bbghbackend.model.Article;
-import com.github.bpiatek.bbghbackend.model.Comment;
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Created by Bartosz Piatek on 15/07/2020
+ * Created by Bartosz Piatek on 26/07/2020
  */
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -78,5 +77,4 @@ class ArticleRepositoryTest {
         .dateAdded(COMMENT_DATE)
         .build();
   }
-
 }

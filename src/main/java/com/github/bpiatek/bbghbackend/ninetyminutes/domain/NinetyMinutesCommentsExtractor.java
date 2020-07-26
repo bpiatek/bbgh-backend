@@ -1,7 +1,7 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
-import com.github.bpiatek.bbghbackend.model.Comment;
-import com.github.bpiatek.bbghbackend.model.CommentHtmlExtractor;
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
+import com.github.bpiatek.bbghbackend.model.comment.CommentHtmlExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
