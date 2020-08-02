@@ -3,6 +3,7 @@ package com.github.bpiatek.bbghbackend.controller;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
 import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
+import com.github.bpiatek.bbghbackend.model.article.search.ArticleSearchResult;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.article.Article;
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
@@ -33,14 +34,15 @@ class ArticlesController {
     this.commentFacade = commentFacade;
   }
 
-  @ApiOperation(value = "Get all articles")
+  @ApiOperation(value = "Search articles")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all articles"),
   })
+  @ApiImplicitParam(name = "query", dataType = "string", paramType = "query", value = "negative < 20, comments > 40, creationDate > 2020-01-01")
   @ApiPageable
   @GetMapping
-  Page<Article> getAllArticlesPageable(@ApiIgnore Pageable pageable) {
-    return articleFacade.findAll(pageable);
+  Page<ArticleSearchResult> searchArticles(@ApiIgnore Pageable pageable, @ApiIgnore @RequestParam(value = "query", required = false) String query) {
+    return articleFacade.search(pageable, query);
   }
 
   @ApiOperation(value = "Get article by ID")
