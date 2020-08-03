@@ -9,11 +9,12 @@ import java.util.List;
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
 public interface ArticleSearcher {
-  Page<ArticleSearchResult> find(Pageable pageable, List<ArticleSearchFilter> queryList);
 
-  List<ArticleSearchFilter> getFiltersFromSearchQuery(String query);
+  Page<ArticleSearchResult> find(Pageable pageable, List<ArticleSearchFilter> queryList);
 
   default Page<ArticleSearchResult> find(Pageable pageable, String query) {
     return find(pageable, getFiltersFromSearchQuery(query));
   }
+
+  List<ArticleSearchFilter> getFiltersFromSearchQuery(String query);
 }

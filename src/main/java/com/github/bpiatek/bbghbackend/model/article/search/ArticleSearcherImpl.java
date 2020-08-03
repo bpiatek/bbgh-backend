@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -35,8 +34,8 @@ public class ArticleSearcherImpl implements ArticleSearcher {
     if (query == null) {
       return filterList;
     }
-    query = query.replaceAll("\\s+","");
-    Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)([^,]+?),");
+    query = query.replaceAll("\\s+","").toLowerCase();
+    Pattern pattern = Pattern.compile("(\\w+?)(:|<|>|=)([^,]+?),");
     Matcher matcher = pattern.matcher(query + ",");
     while (matcher.find()) {
       filterList.add(new ArticleSearchFilter(matcher.group(1), matcher.group(2), matcher.group(3)));
@@ -46,10 +45,11 @@ public class ArticleSearcherImpl implements ArticleSearcher {
 
   @Override
   public Page<ArticleSearchResult> find(Pageable pageable, List<ArticleSearchFilter> filterList) {
-
+    // Using LinkedHashMap because we need to keep elements order
     Map<String,String> fields = new LinkedHashMap<>() {{
-      // fields are lowercase to simplify filter step
       String selectCountByStatus = "(SELECT COUNT(id) FROM comment WHERE article_id = article.id AND comment_opinion_status = '%s')";
+      // fields are lowercase to simplify filter step
+      // alias, field
       put("id", "id");
       put("url", "url");
       put("title", "title");
@@ -65,25 +65,41 @@ public class ArticleSearcherImpl implements ArticleSearcher {
     // Map of future query parameters
     Map<String, Object> sqlQueryParams = new HashMap<>();
 
+    // select
     SqlSelectStatement selectStatement = new SqlSelectStatement();
     for (Map.Entry<String,String> field : fields.entrySet()) {
       selectStatement.select(String.format("%s AS %s", field.getValue(), field.getKey()));
     }
+
+    //from
     selectStatement.from("article");
 
     // where
     for (ArticleSearchFilter filter : filterList) {
-      if (fields.containsKey(filter.getProperty().toLowerCase())) {
-        String alias = filter.getProperty().toLowerCase();
-        if (filter.getOperation().equalsIgnoreCase(">")) {
-          selectStatement.where(String.format("%s > :%s", fields.get(alias), alias));
+      if (!fields.containsKey(filter.getProperty())) {
+        continue;
+      }
+      String alias = filter.getProperty();
+      String operation = "";
+      boolean canCompareFields = false;
+      switch (filter.getOperation()) {
+        case ">":
+        case "<":
+        case "=":
+          operation = filter.getOperation();
+          canCompareFields = true;
+          break;
+        case ":":
+          operation = "LIkE";
+          break;
+      }
+      if (operation.length() > 0) {
+        // if we can compare fields and filter value is other field name
+        if (canCompareFields && (filter.getValue() instanceof String) &&  fields.containsKey(filter.getValue().toString())) {
+          selectStatement.where(String.format("%s %s %s", fields.get(alias), operation, fields.get(filter.getValue().toString())));
+        } else {
+          selectStatement.where(String.format("%s %s :%s", fields.get(alias), operation, alias));
           sqlQueryParams.put(alias, filter.getValue());
-        } else if (filter.getOperation().equalsIgnoreCase("<")) {
-          selectStatement.where(String.format("%s < :%s", fields.get(alias), alias));
-          sqlQueryParams.put(alias, filter.getValue());
-        } else if (filter.getOperation().equalsIgnoreCase(":")) {
-          selectStatement.where(String.format("%s LIKE :%s", fields.get(alias), alias));
-          sqlQueryParams.put(alias, "%"+filter.getValue().toString()+"%");
         }
       }
     }
@@ -95,15 +111,16 @@ public class ArticleSearcherImpl implements ArticleSearcher {
       }
     }
 
+    // limit and offset
     selectStatement.limit(pageable.getPageSize());
     selectStatement.offset(pageable.getOffset());
 
-    Query selectQuery = createQuery(selectStatement.toString(), sqlQueryParams);
-    Query countQuery = createQuery(createSqlCountQuery(selectStatement).toString(), sqlQueryParams);
+    Query selectQuery = createNativeQuery(selectStatement.toString(), sqlQueryParams);
+    Query countQuery = createNativeQuery(createSqlCountQuery(selectStatement).toString(), sqlQueryParams);
 
     long count = ((BigInteger) countQuery.getSingleResult()).longValue();
 
-    // mapping sql select results to dto
+    // mapping sql select results to ArticleSearchResult
     @SuppressWarnings("unchecked")
     List<Object[]> searchResult = selectQuery.getResultList();
     List<ArticleSearchResult> results = new ArrayList<>();
@@ -127,7 +144,7 @@ public class ArticleSearcherImpl implements ArticleSearcher {
     return new PageImpl<>(results, pageable, count);
   }
 
-  private Query createQuery(String sql, Map<String,Object> params) {
+  private Query createNativeQuery(String sql, Map<String,Object> params) {
     Query query = em.createNativeQuery(sql);
     // Bind parameters
     for (Map.Entry<String, Object> entry : params.entrySet()) {
