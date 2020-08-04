@@ -1,6 +1,5 @@
 package com.github.bpiatek.bbghbackend.model.article.search;
 
-import com.github.bpiatek.bbghbackend.model.comment.CommentOpinionStatus;
 import com.github.bpiatek.bbghbackend.util.sql.SqlSelectStatement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,6 +13,9 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.github.bpiatek.bbghbackend.model.comment.CommentOpinionStatus.*;
+import static java.lang.String.format;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -43,32 +45,38 @@ public class ArticleSearcherImpl implements ArticleSearcher {
     return filterList;
   }
 
+  private Map<String, String> createFieldsMap() {
+    // Using LinkedHashMap because we need to keep elements order
+    Map<String, String> fields = new LinkedHashMap<>();
+    String selectCountByStatus = "(SELECT COUNT(id) FROM comment WHERE article_id = article.id AND comment_opinion_status = '%s')";
+    // fields are lowercase to simplify filter step
+    // alias, field
+    fields.put("id", "id");
+    fields.put("url", "url");
+    fields.put("title", "title");
+    fields.put("creationdate", "creation_date");
+    fields.put("content", "content");
+    fields.put("comments", "(SELECT COUNT(id) FROM comment WHERE article_id = article.id)");
+    fields.put("positive", format(selectCountByStatus, POSITIVE));
+    fields.put("neutral", format(selectCountByStatus, NEUTRAL));
+    fields.put("negative", format(selectCountByStatus, NEGATIVE));
+    fields.put("notopinion", format(selectCountByStatus, NOT_OPINION));
+    fields.put("notchecked", format(selectCountByStatus, NOT_CHECKED));
+
+    return fields;
+  }
+
   @Override
   public Page<ArticleSearchResult> find(Pageable pageable, List<ArticleSearchFilter> filterList) {
-    // Using LinkedHashMap because we need to keep elements order
-    Map<String,String> fields = new LinkedHashMap<>() {{
-      String selectCountByStatus = "(SELECT COUNT(id) FROM comment WHERE article_id = article.id AND comment_opinion_status = '%s')";
-      // fields are lowercase to simplify filter step
-      // alias, field
-      put("id", "id");
-      put("url", "url");
-      put("title", "title");
-      put("creationdate", "creation_date");
-      put("content", "content");
-      put("comments", "(SELECT COUNT(id) FROM comment WHERE article_id = article.id)");
-      put("positive", String.format(selectCountByStatus, CommentOpinionStatus.POSITIVE));
-      put("neutral", String.format(selectCountByStatus, CommentOpinionStatus.NEUTRAL));
-      put("negative", String.format(selectCountByStatus, CommentOpinionStatus.NEGATIVE));
-      put("notopinion", String.format(selectCountByStatus, CommentOpinionStatus.NOT_OPINION));
-      put("notchecked", String.format(selectCountByStatus, CommentOpinionStatus.NOT_CHECKED));
-    }};
-    // Map of future query parameters
-    Map<String, Object> sqlQueryParams = new HashMap<>();
+
+    SqlSelectStatement selectStatement = new SqlSelectStatement();
+    Map<String, Object> selectStatementParams2 = new HashMap<>();
+    List<Object> selectStatementParams = new ArrayList<>();
 
     // select
-    SqlSelectStatement selectStatement = new SqlSelectStatement();
+    Map<String,String> fields = createFieldsMap();
     for (Map.Entry<String,String> field : fields.entrySet()) {
-      selectStatement.select(String.format("%s AS %s", field.getValue(), field.getKey()));
+      selectStatement.select(format("%s AS %s", field.getValue(), field.getKey()));
     }
 
     //from
@@ -76,38 +84,40 @@ public class ArticleSearcherImpl implements ArticleSearcher {
 
     // where
     for (ArticleSearchFilter filter : filterList) {
-      if (!fields.containsKey(filter.getProperty())) {
+      String alias = filter.getProperty();
+      if (!fields.containsKey(alias)) {
         continue;
       }
-      String alias = filter.getProperty();
-      String operation = "";
+      String sqlOperation = "";
       boolean canCompareFields = false;
       switch (filter.getOperation()) {
         case ">":
         case "<":
         case "=":
-          operation = filter.getOperation();
+          sqlOperation = filter.getOperation();
           canCompareFields = true;
           break;
         case ":":
-          operation = "LIkE";
+          sqlOperation = "LIKE";
           break;
       }
-      if (operation.length() > 0) {
+      if (sqlOperation.length() > 0) {
         // if we can compare fields and filter value is other field name
         if (canCompareFields && (filter.getValue() instanceof String) &&  fields.containsKey(filter.getValue().toString())) {
-          selectStatement.where(String.format("%s %s %s", fields.get(alias), operation, fields.get(filter.getValue().toString())));
+          selectStatement.where(format("%s %s %s", fields.get(alias), sqlOperation, fields.get(filter.getValue().toString())));
         } else {
-          selectStatement.where(String.format("%s %s :%s", fields.get(alias), operation, alias));
-          sqlQueryParams.put(alias, filter.getValue());
+          selectStatement.where(format("%s %s :%s", fields.get(alias), sqlOperation, selectStatementParams.size()));
+          selectStatementParams.add(filter.getValue());
+          selectStatementParams2.put(alias, filter.getValue());
         }
       }
     }
 
     // order by
     for (Sort.Order order : pageable.getSort()) {
-      if (fields.containsKey(order.getProperty().toLowerCase())) {
-        selectStatement.orderBy(String.format("%s %s", order.getProperty().toLowerCase(), order.getDirection()));
+      String alias = order.getProperty().toLowerCase();
+      if (fields.containsKey(alias)) {
+        selectStatement.orderBy(format("%s %s", alias, order.getDirection()));
       }
     }
 
@@ -115,42 +125,31 @@ public class ArticleSearcherImpl implements ArticleSearcher {
     selectStatement.limit(pageable.getPageSize());
     selectStatement.offset(pageable.getOffset());
 
-    Query selectQuery = createNativeQuery(selectStatement.toString(), sqlQueryParams);
-    Query countQuery = createNativeQuery(createSqlCountQuery(selectStatement).toString(), sqlQueryParams);
 
-    long count = ((BigInteger) countQuery.getSingleResult()).longValue();
-
-    // mapping sql select results to ArticleSearchResult
-    @SuppressWarnings("unchecked")
-    List<Object[]> searchResult = selectQuery.getResultList();
-    List<ArticleSearchResult> results = new ArrayList<>();
-    for (Object[] b : searchResult) {
-      results.add(ArticleSearchResult.builder()
-          .id(((BigInteger) b[0]).longValue())
-          .url((String) b[1])
-          .title((String) b[2])
-          .creationDate(((Timestamp) b[3]).toLocalDateTime())
-          .content((String) b[4])
-          .comments(((BigInteger) b[5]).longValue())
-          .positive(((BigInteger) b[6]).longValue())
-          .neutral(((BigInteger) b[7]).longValue())
-          .negative(((BigInteger) b[8]).longValue())
-          .notOpinion(((BigInteger) b[9]).longValue())
-          .notChecked(((BigInteger) b[10]).longValue())
-          .build()
-      );
+    // count first to avoid useless result query
+    long count = getCount(selectStatement, selectStatementParams);
+    if (count == 0) {
+      return new PageImpl<>(new ArrayList<>(), pageable, 0L);
     }
 
-    return new PageImpl<>(results, pageable, count);
+    return new PageImpl<>(getArticleSearchResultList(selectStatement, selectStatementParams), pageable, count);
   }
 
-  private Query createNativeQuery(String sql, Map<String,Object> params) {
-    Query query = em.createNativeQuery(sql);
-    // Bind parameters
-    for (Map.Entry<String, Object> entry : params.entrySet()) {
-      query.setParameter(entry.getKey(), entry.getValue());
+  private long getCount(SqlSelectStatement sqlSelectStatement, List<Object> params) {
+    Query countQuery = createNativeQuery(createSqlCountQuery(sqlSelectStatement).toString(), params);
+    return ((BigInteger) countQuery.getSingleResult()).longValue();
+  }
+
+  private List<ArticleSearchResult> getArticleSearchResultList(SqlSelectStatement selectStatement, List<Object> params) {
+    List<ArticleSearchResult> articleSearchResultList = new ArrayList<>();
+    Query selectQuery = createNativeQuery(selectStatement.toString(), params);
+    // mapping sql select results to ArticleSearchResult
+    @SuppressWarnings("unchecked")
+    List<Object[]> searchResults = selectQuery.getResultList();
+    for (Object[] result : searchResults) {
+      articleSearchResultList.add(mapQueryResult(result));
     }
-    return query;
+    return articleSearchResultList;
   }
 
   private SqlSelectStatement createSqlCountQuery(SqlSelectStatement fromQuery) {
@@ -162,8 +161,32 @@ public class ArticleSearcherImpl implements ArticleSearcher {
     subquery.select("id");
     SqlSelectStatement countQuery = new SqlSelectStatement();
     countQuery
-        .select("COUNT(id)")
-        .from(String.format("(%s) articles", subquery));
+        .select("COUNT(*)")
+        .from(format("(%s) articles", subquery));
     return countQuery;
+  }
+
+  private ArticleSearchResult mapQueryResult(Object[] result) {
+    return ArticleSearchResult.builder()
+        .id(((BigInteger) result[0]).longValue())
+        .url((String) result[1])
+        .title((String) result[2])
+        .creationDate(((Timestamp) result[3]).toLocalDateTime())
+        .content((String) result[4])
+        .comments(((BigInteger) result[5]).longValue())
+        .positive(((BigInteger) result[6]).longValue())
+        .neutral(((BigInteger) result[7]).longValue())
+        .negative(((BigInteger) result[8]).longValue())
+        .notOpinion(((BigInteger) result[9]).longValue())
+        .notChecked(((BigInteger) result[10]).longValue())
+        .build();
+  }
+
+  private Query createNativeQuery(String sql, List<Object> params) {
+    Query query = em.createNativeQuery(sql);
+    for(int i = 0; i < params.size(); i++) {
+      query.setParameter(String.valueOf(i), params.get(i));
+    }
+    return query;
   }
 }
