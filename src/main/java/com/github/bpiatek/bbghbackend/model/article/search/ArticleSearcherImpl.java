@@ -87,6 +87,7 @@ public class ArticleSearcherImpl implements ArticleSearcher {
       if (!fields.containsKey(alias)) {
         continue;
       }
+
       switch (filter.getOperation()) {
         case ">":
         case "<":
