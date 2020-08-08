@@ -70,7 +70,6 @@ public class ArticleSearcherImpl implements ArticleSearcher {
   public Page<ArticleSearchResult> find(Pageable pageable, List<ArticleSearchFilter> filterList) {
 
     SqlSelectStatement selectStatement = new SqlSelectStatement();
-    Map<String, Object> selectStatementParams2 = new HashMap<>();
     List<Object> selectStatementParams = new ArrayList<>();
 
     // select
@@ -88,28 +87,22 @@ public class ArticleSearcherImpl implements ArticleSearcher {
       if (!fields.containsKey(alias)) {
         continue;
       }
-      String sqlOperation = "";
-      boolean canCompareFields = false;
+
       switch (filter.getOperation()) {
         case ">":
         case "<":
         case "=":
-          sqlOperation = filter.getOperation();
-          canCompareFields = true;
+          if (fields.containsKey(filter.getValue())) {
+            selectStatement.where(format("%s %s %s", fields.get(alias), filter.getOperation(), fields.get(filter.getValue())));
+          } else {
+            selectStatement.where(format("%s %s :%s", fields.get(alias), filter.getOperation(), selectStatementParams.size()));
+            selectStatementParams.add(filter.getValue());
+          }
           break;
         case ":":
-          sqlOperation = "LIKE";
+          selectStatement.where(format("%s LIKE :%s", fields.get(alias), selectStatementParams.size()));
+          selectStatementParams.add("%"+filter.getValue()+"%");
           break;
-      }
-      if (sqlOperation.length() > 0) {
-        // if we can compare fields and filter value is other field name
-        if (canCompareFields && (filter.getValue() instanceof String) &&  fields.containsKey(filter.getValue().toString())) {
-          selectStatement.where(format("%s %s %s", fields.get(alias), sqlOperation, fields.get(filter.getValue().toString())));
-        } else {
-          selectStatement.where(format("%s %s :%s", fields.get(alias), sqlOperation, selectStatementParams.size()));
-          selectStatementParams.add(filter.getValue());
-          selectStatementParams2.put(alias, filter.getValue());
-        }
       }
     }
 

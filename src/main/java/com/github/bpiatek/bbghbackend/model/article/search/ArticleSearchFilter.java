@@ -11,5 +11,5 @@ import lombok.Getter;
 public class ArticleSearchFilter {
   private final String property;
   private final String operation;
-  private final Object value;
+  private final String value;
 }
