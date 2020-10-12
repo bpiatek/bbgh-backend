@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.comment.CommentHtmlExtractor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +16,13 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 class NinetyMinutesCommentsExtractor implements CommentHtmlExtractor {
 
   private static final Pattern PATTERN = Pattern.compile("<a class=\"main\">(?<author>[^<]*)</a> - (?<date>.*?) - (?<authorHost>.*?)<br>\n(?<content>.*?)\n<p", Pattern.DOTALL);
   private static final int PATTERN_GROUPS_COUNT = 4;
 
   private final CommentCreator commentCreator;
-
-  NinetyMinutesCommentsExtractor(CommentCreator commentCreator) {
-    this.commentCreator = commentCreator;
-  }
 
   @Override
   public List<Comment> getComments(String html) {

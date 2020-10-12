@@ -23,7 +23,7 @@ class CommentCreator {
     return Comment.builder()
         .author(matcher.group("author"))
         .content(parse(matcher.group("content")).text())
-        .dateAdded(localDateTimeParser.parse(matcher.group("date")))
+        .dateAdded(localDateTimeParser.parseToLocalDateTime(matcher.group("date")))
         .commentOpinionStatus(NOT_CHECKED)
         .build();
   }

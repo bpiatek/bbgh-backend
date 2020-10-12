@@ -23,8 +23,14 @@ class TextToLocalDateTimeParser {
   private static final int POSITION_OF_YEAR = 2;
   private static final int POSITION_OF_TIME = 3;
 
-  LocalDateTime parse(String textDate) {
+  // parsing articles and comments added dates
+  LocalDateTime parseToLocalDateTime(String textDate) {
     return constructLocalDateTime(splitBySpacesAndRemoveCommas(textDate));
+  }
+
+  // parsing dates of birth of players
+  LocalDate parseToLocalDate(String textDate) {
+    return constructLocalDate(splitBySpacesAndRemoveCommas(textDate));
   }
 
   private LocalDateTime constructLocalDateTime(List<String> list) {
