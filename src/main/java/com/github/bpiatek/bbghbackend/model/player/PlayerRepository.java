@@ -12,6 +12,6 @@ interface PlayerRepository extends Repository<Player, Long> {
   Player save(Player player);
   Optional<Player> findById(Long id);
 
-  @Query(value = "SELECT max(Player.url_id) FROM Player", nativeQuery = true)
+  @Query(value = "SELECT max(player.url_id) FROM player", nativeQuery = true)
   Integer findLastPlayerIdRead();
 }
