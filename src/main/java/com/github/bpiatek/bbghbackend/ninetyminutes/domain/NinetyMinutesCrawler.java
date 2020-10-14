@@ -8,6 +8,7 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.regex.Pattern;
@@ -16,17 +17,13 @@ import java.util.regex.Pattern;
  * Created by Bartosz Piatek on 10/07/2020
  */
 @Log4j2
+@AllArgsConstructor
 class NinetyMinutesCrawler extends WebCrawler {
   private static final String NEWS_URL_TEMPLATE      = "http://www.90minut.pl/news/";
   private static final String NEWS_LIST_URL_TEMPLATE = "http://www.90minut.pl/news.php?"; // www.90minut.pl is another great page written in PHP.
 
   private final ArticleCreator articleCreator;
   private final ArticleFacade articleFacade;
-
-  NinetyMinutesCrawler(ArticleCreator articleCreator, ArticleFacade articleFacade) {
-    this.articleCreator = articleCreator;
-    this.articleFacade = articleFacade;
-  }
 
   private static final Pattern FILTERS = Pattern.compile(
       ".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4" +

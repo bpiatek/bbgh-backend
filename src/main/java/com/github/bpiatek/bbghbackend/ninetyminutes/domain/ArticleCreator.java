@@ -4,6 +4,7 @@ import com.github.bpiatek.bbghbackend.model.article.Article;
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,16 +13,11 @@ import java.util.List;
  * Created by Bartosz Piatek on 10/07/2020
  */
 @Service
+@AllArgsConstructor
 class ArticleCreator {
 
   private final NinetyMinutesArticleExtractor articleExtractor;
   private final NinetyMinutesCommentsExtractor commentsExtractor;
-
-  ArticleCreator(NinetyMinutesArticleExtractor articleExtractor,
-                 NinetyMinutesCommentsExtractor commentsExtractor) {
-    this.articleExtractor = articleExtractor;
-    this.commentsExtractor = commentsExtractor;
-  }
 
   Article createFromPage(Page page, HtmlParseData htmlParseData) {
     final String html = htmlParseData.getHtml();

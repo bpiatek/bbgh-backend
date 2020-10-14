@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import com.github.bpiatek.bbghbackend.model.article.ArticleHtmlExtractor;
+import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,13 +15,10 @@ import java.time.LocalDateTime;
  * Created by Bartosz Piatek on 10/07/2020
  */
 @Service
+@AllArgsConstructor
 class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
 
   private final TextToLocalDateTimeParser localDateTimeParser;
-
-  NinetyMinutesArticleExtractor(TextToLocalDateTimeParser localDateTimeParser) {
-    this.localDateTimeParser = localDateTimeParser;
-  }
 
   @Override
   public String getArticleContentAsText(String html) {
@@ -37,7 +35,7 @@ class NinetyMinutesArticleExtractor implements ArticleHtmlExtractor {
     final Document document = Jsoup.parse(html);
     final Node date = document.select("p").get(1).childNode(1);
 
-    return localDateTimeParser.parse(date.toString());
+    return localDateTimeParser.parseToLocalDateTime(date.toString());
   }
 
   private static Element getArticleContent(String html) {
