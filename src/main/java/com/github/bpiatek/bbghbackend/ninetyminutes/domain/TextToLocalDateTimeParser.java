@@ -30,7 +30,11 @@ class TextToLocalDateTimeParser {
 
   // parsing dates of birth of players
   LocalDate parseToLocalDate(String textDate) {
-    return constructLocalDate(splitBySpacesAndRemoveCommas(textDate));
+    final List<String> datePositions = splitBySpacesAndRemoveCommas(textDate);
+    if (datePositions.size() < 3) {
+      return null;
+    }
+    return constructLocalDate(datePositions);
   }
 
   private LocalDateTime constructLocalDateTime(List<String> list) {

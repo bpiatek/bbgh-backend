@@ -18,6 +18,7 @@ public class TestUtils {
   public static final String HTML_NO_COMMENTS = "src/test/resources/articles/htmlExampleNoComments.html";
   public static final String HTML_PLAYER_1_FILE = "src/test/resources/player/playerExample1.html";
   public static final String HTML_PLAYER_2_FILE = "src/test/resources/player/playerExample2.html";
+  public static final String HTML_PLAYER_3_FILE = "src/test/resources/player/playerExample3.html";
 
   @SneakyThrows
   public static String readHtmlTestFile(String path) {

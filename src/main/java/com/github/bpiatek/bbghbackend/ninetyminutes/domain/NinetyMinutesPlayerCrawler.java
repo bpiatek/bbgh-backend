@@ -19,23 +19,28 @@ import java.io.IOException;
 @AllArgsConstructor
 class NinetyMinutesPlayerCrawler {
 
+  private static final String PLAYER_URL = "http://www.90minut.pl/kariera.php?id=";
+
   private final NinetyMinutesPlayerExtractor playerExtractor;
   private final PlayerFacade playerFacade;
 
   void startCrawlingForPlayers() {
     for(int i = calculateStartIndex(); i <= 42_140; i++) {
       final String html = getHtmlPageForPlayerWithId(i);
-      Player player = playerExtractor.getPlayer(html, i);
-
-      playerFacade.save(player);
+      if(!html.isEmpty()) {
+        Player player = playerExtractor.getPlayer(html, i);
+          if(player != null) {
+            playerFacade.save(player);
+          }
+      }
     }
   }
 
   private String getHtmlPageForPlayerWithId(Integer id) {
     try {
-      return Jsoup.connect("http://www.90minut.pl/kariera.php?id=" + id).get().html();
+      return Jsoup.connect(PLAYER_URL + id).get().html();
     } catch (IOException e) {
-      log.warn("Connection error while parsing http://www.90minut.pl/kariera.php?id={}.\nMessage: {}.", id, e.getMessage());
+      log.warn("Connection error while parsing PLAYER_URL{}.\nMessage: {}.", id, e.getMessage());
     }
 
     return EMPTY;

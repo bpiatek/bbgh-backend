@@ -26,27 +26,46 @@ class PlayerCreator {
                                                          quote(" <td>") + "(?<value>.*?)" + quote("</td>"), DOTALL);
 
   private final TextToLocalDateTimeParser toLocalDateTimeParser;
-   
-  Player createFromHtml(String html, Integer urlId) {
-    Document document = Jsoup.parse(html);
-    final Elements tableRows = provideTableRows(document);
 
+  Player createFromHtml(String html, Integer urlId) {
+    final Elements tableRows = provideTableRows(html);
+    if (tableRows == null) {
+      return null;
+    }
+
+    return buildPlayerFromTableRows(urlId, tableRows);
+  }
+
+  private Elements provideTableRows(String html) {
+    Document document = Jsoup.parse(html);
+    Element table = document.select("table[class=main]").first();
+    if (table != null) {
+      return table.select("tr");
+    }
+    return null;
+  }
+
+  private Player buildPlayerFromTableRows(Integer urlId, Elements tableRows) {
     String firstName = null;
     String lastName = null;
     String dob = null;
+    String currentTeam = null;
 
-    for (Element e: tableRows) {
-      String text = e.toString().replace("\n", "")
-          .replaceAll(" +", " ");
+    for (Element e : tableRows) {
+      String text = elementToStringAndTrim(e);
 
-      if(text.contains("Imię")) {
+      if (text.contains("Imię")) {
         firstName = getRegexValue(text);
       }
-      if(text.contains("Nazwisko")) {
+      if (text.contains("Nazwisko")) {
         lastName = getRegexValue(text);
       }
-      if(text.contains("Data urodzenia")) {
+      if (text.contains("Data urodzenia")) {
         dob = getRegexValue(text);
+      }
+      if (text.contains("Obecny klub")) {
+        final String value = getRegexValue(text);
+        currentTeam = "".equals(value) ? null : value;
       }
     }
 
@@ -55,23 +74,24 @@ class PlayerCreator {
         .firstName(firstName)
         .lastName(lastName)
         .dateOfBirth(getDateOfBirth(dob))
+        .currentTeam(currentTeam)
         .build();
+  }
+
+  private String elementToStringAndTrim(Element e) {
+    return e.toString()
+        .replace("\n", "")
+        .replaceAll(" +", " ");
   }
 
   private LocalDate getDateOfBirth(String dob) {
     return toLocalDateTimeParser.parseToLocalDate(dob);
   }
 
-  private Elements provideTableRows(Document document) {
-    Element table = document.select("table[class=main]").first();
-
-    return table.select("tr");
-  }
-
   private String getRegexValue(String text) {
     final Matcher matcher = PATTERN.matcher(text);
 
-    if(matcher.find()) {
+    if (matcher.find()) {
       return matcher.group("value");
     }
 

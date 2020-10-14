@@ -22,5 +22,6 @@ public class Player {
   private Integer urlId;
   private String firstName;
   private String lastName;
+  private String currentTeam;
   private LocalDate dateOfBirth;
 }
