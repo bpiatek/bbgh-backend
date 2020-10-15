@@ -57,7 +57,7 @@ class CrawlersController {
   @PostMapping("/run/90minutes/players")
   ResponseEntity<Void> runPlayersCrawler() {
     try {
-      log.info("Crawler for portal 90minut.pl started manually. Crawling for PLAYERS");
+      log.info("Crawler for portal 90minut.pl started manually.");
 
       Runnable runnable = ninetyMinutesFacade::runPlayersCrawler;
       final Thread thread = new Thread(runnable);
