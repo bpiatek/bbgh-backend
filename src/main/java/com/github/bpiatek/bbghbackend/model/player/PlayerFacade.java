@@ -1,7 +1,12 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
+import com.github.bpiatek.bbghbackend.model.comment.Comment;
+import com.github.bpiatek.bbghbackend.model.comment.api.CommentNotFoundException;
+import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Created by Bartosz Piatek on 12/10/2020
@@ -14,6 +19,10 @@ public class PlayerFacade {
 
   public Player save(Player player) {
     return playerRepository.save(player);
+  }
+
+  public Player findById(Long id) {
+    return playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
   }
 
   public Integer findLastSavedPlayer() {
