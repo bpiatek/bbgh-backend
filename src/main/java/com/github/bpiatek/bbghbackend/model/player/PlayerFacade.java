@@ -1,12 +1,10 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
-import com.github.bpiatek.bbghbackend.model.comment.Comment;
-import com.github.bpiatek.bbghbackend.model.comment.api.CommentNotFoundException;
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * Created by Bartosz Piatek on 12/10/2020
@@ -29,4 +27,7 @@ public class PlayerFacade {
     return playerRepository.findLastPlayerIdRead();
   }
 
+  public Page<Player> list(Pageable pageable) {
+    return playerRepository.findAll(pageable);
+  }
 }
