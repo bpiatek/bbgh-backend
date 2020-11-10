@@ -13,4 +13,6 @@ public class CreateMentionRequest {
   Long commentId;
   Long playerId;
   MentionSentiment sentiment;
+  int startsAt;
+  int endsAt;
 }
