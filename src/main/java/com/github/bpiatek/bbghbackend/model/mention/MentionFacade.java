@@ -21,4 +21,8 @@ public class MentionFacade {
   public Page<Mention> search(Pageable pageable) {
     return mentionRepository.findAll(pageable);
   }
+
+  public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {
+    return mentionRepository.findByCommentId(commentId, pageable);
+  }
 }

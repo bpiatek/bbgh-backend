@@ -31,6 +31,13 @@ public class Mention {
   @Enumerated(STRING)
   private MentionSentiment sentiment;
 
+  /**
+   * Index of first character of mention in a comment
+   * e.g. comment: "Good game John Smith", mention is for player "John Smith" and  mention.startsAt=10, mention.endsAt=19
+   */
+  private int startsAt;
+  private int endsAt;
+
   @Override
   public String toString() {
     return "Mention{" +
@@ -38,6 +45,8 @@ public class Mention {
         ", comment=" + comment +
         ", player=" + player +
         ", sentiment=" + sentiment +
+        ", startsAt=" + startsAt +
+        ", endsAt=" + endsAt +
         '}';
   }
 }

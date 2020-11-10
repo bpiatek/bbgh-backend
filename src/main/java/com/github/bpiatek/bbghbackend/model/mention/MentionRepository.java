@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface MentionRepository extends Repository<Mention, Long> {
   Mention save(Mention player);
 
+  Page<Mention> findByCommentId(Long commentId, Pageable pageable);
+
   Optional<Mention> findById(Long id);
 
   Page<Mention> findAll(Pageable pageable);

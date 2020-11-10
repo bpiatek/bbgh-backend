@@ -47,7 +47,7 @@ public class MentionsController {
   })
   @ApiPageable
   @GetMapping
-  Page<Mention> searchArticles(@ApiIgnore Pageable pageable) {
+  Page<Mention> searchMentions(@ApiIgnore Pageable pageable) {
     return mentionFacade.search(pageable);
   }
 
@@ -56,12 +56,14 @@ public class MentionsController {
       @ApiResponse(code = ORDINAL_201_Created, message = "Successfully created mention"),
   })
   @PostMapping
-  ResponseEntity<Mention> createArticle(@RequestBody CreateMentionRequest createMentionRequest) {
+  ResponseEntity<Mention> createMention(@RequestBody CreateMentionRequest createMentionRequest) {
 
     Mention mention = Mention.builder()
         .comment(this.commentFacade.findById(createMentionRequest.getCommentId()))
         .player(this.playerFacade.findById(createMentionRequest.getPlayerId()))
         .sentiment(createMentionRequest.getSentiment() != null ? createMentionRequest.getSentiment() : MentionSentiment.NOT_CHECKED)
+        .startsAt(createMentionRequest.getStartsAt())
+        .endsAt(createMentionRequest.getEndsAt())
         .build();
 
     this.mentionFacade.save(mention);
