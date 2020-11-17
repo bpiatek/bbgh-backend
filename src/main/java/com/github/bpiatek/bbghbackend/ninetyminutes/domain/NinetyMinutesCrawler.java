@@ -2,8 +2,8 @@ package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
 import static com.github.bpiatek.bbghbackend.ninetyminutes.domain.NinetyMinutesCrawlerController.NINETY_MINUTES_URL;
 
-import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
 import com.github.bpiatek.bbghbackend.model.article.Article;
+import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;

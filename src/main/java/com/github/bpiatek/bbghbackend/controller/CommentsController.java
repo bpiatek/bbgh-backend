@@ -4,6 +4,7 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
+import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
@@ -38,8 +39,8 @@ class CommentsController {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved comment by ID"),
   })
   @GetMapping("comment/{commentId}")
-  ResponseEntity<Comment> getCommentById(@PathVariable Long commentId) {
-    return ResponseEntity.ok().body(commentFacade.findById(commentId));
+  ResponseEntity<CommentResponse> getCommentById(@PathVariable Long commentId) {
+    return ResponseEntity.ok().body(commentFacade.findById(commentId).toCommentResponse());
   }
 
   @ApiOperation(value = "Get all mentions for given comment")

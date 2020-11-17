@@ -19,3 +19,7 @@ crawler:
 logging:
   file:
     path: "src/test/resources/logs"
+
+90minutes:
+  players:
+    number: 42587

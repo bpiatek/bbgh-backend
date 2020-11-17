@@ -6,6 +6,7 @@ import com.github.bpiatek.bbghbackend.model.article.Article;
 import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
+import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
@@ -58,7 +59,7 @@ class ArticlesController {
   })
   @ApiPageable
   @GetMapping("{articleId}/comments")
-  Page<Comment> getAllCommentsForArticlePageable(@PathVariable Long articleId, @ApiIgnore Pageable pageable) {
+  Page<CommentResponse> getAllCommentsForArticlePageable(@PathVariable Long articleId, @ApiIgnore Pageable pageable) {
     return commentFacade.findByArticleId(articleId, pageable);
   }
 }

@@ -30,6 +30,8 @@ class ArticleCreator {
         .build();
 
     final List<Comment> comments = commentsExtractor.getComments(html);
+    comments.forEach(comment -> comment.setArticle(article));
+
     article.setComments(comments);
 
     return article;
