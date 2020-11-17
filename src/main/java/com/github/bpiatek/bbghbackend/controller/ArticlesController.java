@@ -61,4 +61,5 @@ class ArticlesController {
   Page<CommentResponse> getAllCommentsForArticlePageable(@PathVariable Long articleId, @ApiIgnore Pageable pageable) {
     return commentFacade.findByArticleId(articleId, pageable);
   }
+  
 }
