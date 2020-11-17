@@ -4,7 +4,6 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
 import com.github.bpiatek.bbghbackend.model.article.Article;
 import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
-import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;

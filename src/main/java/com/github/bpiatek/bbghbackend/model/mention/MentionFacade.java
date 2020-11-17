@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -23,5 +24,10 @@ public class MentionFacade {
 
   public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {
     return mentionRepository.findByCommentId(commentId, pageable);
+  }
+
+  @Transactional
+  public int setSentiment(Long id, MentionSentiment sentiment) {
+    return mentionRepository.setMentionSentimentById(id, sentiment);
   }
 }

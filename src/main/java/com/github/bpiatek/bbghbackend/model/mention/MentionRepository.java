@@ -1,9 +1,11 @@
 package com.github.bpiatek.bbghbackend.model.mention;
 
-import com.github.bpiatek.bbghbackend.model.article.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -18,5 +20,9 @@ public interface MentionRepository extends Repository<Mention, Long> {
   Optional<Mention> findById(Long id);
 
   Page<Mention> findAll(Pageable pageable);
+
+  @Modifying
+  @Query("UPDATE Mention m SET m.sentiment = :sentiment WHERE m.id = :id")
+  int setMentionSentimentById(@Param("id") Long id, @Param("sentiment") MentionSentiment sentiment);
 
 }

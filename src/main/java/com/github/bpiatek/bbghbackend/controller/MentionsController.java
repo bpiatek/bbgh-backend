@@ -1,13 +1,15 @@
 package com.github.bpiatek.bbghbackend.controller;
 
+import static com.github.bpiatek.bbghbackend.model.mention.MentionSentiment.NOT_CHECKED;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_201_Created;
+import static org.springframework.http.HttpStatus.CREATED;
 
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
-import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
 import com.github.bpiatek.bbghbackend.model.mention.api.CreateMentionRequest;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
@@ -15,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -53,14 +54,25 @@ class MentionsController {
   ResponseEntity<Mention> createMention(@RequestBody CreateMentionRequest createMentionRequest) {
 
     Mention mention = Mention.builder()
-        .comment(this.commentFacade.findById(createMentionRequest.getCommentId()))
-        .player(this.playerFacade.findById(createMentionRequest.getPlayerId()))
-        .sentiment(createMentionRequest.getSentiment() != null ? createMentionRequest.getSentiment() : MentionSentiment.NOT_CHECKED)
+        .comment(commentFacade.findById(createMentionRequest.getCommentId()))
+        .player(playerFacade.findById(createMentionRequest.getPlayerId()))
+        .sentiment(createMentionRequest.getSentiment() != null ? createMentionRequest.getSentiment() : NOT_CHECKED)
         .startsAt(createMentionRequest.getStartsAt())
         .endsAt(createMentionRequest.getEndsAt())
         .build();
 
     this.mentionFacade.save(mention);
-    return ResponseEntity.status(HttpStatus.CREATED).body(mention);
+    return ResponseEntity.status(CREATED).body(mention);
+  }
+
+  @ApiOperation(value = "Set sentiment for given mention")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully set sentiment for mention"),
+  })
+  @PostMapping("{mentionId}/sentiment")
+  ResponseEntity<Void> setMentionSentiment(@PathVariable Long mentionId, @RequestBody MentionSentimentRequest request) {
+    mentionFacade.setSentiment(mentionId, request.getMentionSentiment());
+
+    return ResponseEntity.ok().build();
   }
 }
