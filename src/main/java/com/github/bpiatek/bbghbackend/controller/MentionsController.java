@@ -1,15 +1,17 @@
 package com.github.bpiatek.bbghbackend.controller;
 
-import com.github.bpiatek.bbghbackend.model.comment.Comment;
+import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
+import static org.mortbay.jetty.HttpStatus.ORDINAL_201_Created;
+
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
 import com.github.bpiatek.bbghbackend.model.mention.api.CreateMentionRequest;
-import com.github.bpiatek.bbghbackend.model.player.Player;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
-import static org.mortbay.jetty.HttpStatus.ORDINAL_201_Created;
-
-
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
@@ -29,26 +27,22 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_201_Created;
 @Api(tags = "Mentions controller")
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/mentions")
-public class MentionsController {
+class MentionsController {
+
   private final MentionFacade mentionFacade;
   private final CommentFacade commentFacade;
   private final PlayerFacade playerFacade;
 
-  public MentionsController(MentionFacade mentionFacade, CommentFacade commentFacade, PlayerFacade playerFacade) {
-    this.mentionFacade = mentionFacade;
-    this.commentFacade = commentFacade;
-    this.playerFacade = playerFacade;
-  }
-
-  @ApiOperation(value = "Search mentions")
+  @ApiOperation(value = "Find all mentions")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions"),
   })
   @ApiPageable
   @GetMapping
-  Page<Mention> searchMentions(@ApiIgnore Pageable pageable) {
-    return mentionFacade.search(pageable);
+  Page<Mention> findAllMentions(@ApiIgnore Pageable pageable) {
+    return mentionFacade.findAll(pageable);
   }
 
   @ApiOperation(value = "Create mention.")

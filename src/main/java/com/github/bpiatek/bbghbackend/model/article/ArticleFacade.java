@@ -1,7 +1,5 @@
 package com.github.bpiatek.bbghbackend.model.article;
 
-import com.github.bpiatek.bbghbackend.model.article.search.ArticleSearchResult;
-import com.github.bpiatek.bbghbackend.model.article.search.ArticleSearcher;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +15,13 @@ import java.util.List;
 public class ArticleFacade {
 
   private final ArticleRepository articleRepository;
-  private final ArticleSearcher articleSearcher;
 
   public Article findById(Long id) {
     return articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
   }
 
-  public Page<ArticleSearchResult> search(Pageable pageable, String query) {
-    return articleSearcher.find(pageable, query);
+  public Page<Article> findAll(Pageable pageable) {
+    return articleRepository.findAll(pageable);
   }
 
   public List<Article> findByUrl(String url) {
