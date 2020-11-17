@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.model.comment;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.github.bpiatek.bbghbackend.model.article.Article;
+import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,16 @@ public class Comment {
     this.author = author;
     this.content = content;
     this.dateAdded = dateAdded;
+  }
+
+  public CommentResponse toCommentResponse() {
+    return CommentResponse.builder()
+        .id(this.id)
+        .author(this.author)
+        .content(this.content)
+        .dateAdded(this.dateAdded)
+        .articleId(this.article.getId())
+        .build();
   }
 
   @Override
