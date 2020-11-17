@@ -1,5 +1,6 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class Player {
   private String currentTeam;
   private LocalDate dateOfBirth;
 
+  @JsonIgnore
   public String getFullName() {
     return firstName + " " + lastName;
   }
