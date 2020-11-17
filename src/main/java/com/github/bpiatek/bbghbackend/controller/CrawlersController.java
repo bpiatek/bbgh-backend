@@ -30,8 +30,8 @@ class CrawlersController {
   @PostMapping("/run/90minutes")
   ResponseEntity<Void> runCrawler() {
     try {
-      ninetyMinutesFacade.runCrawler();
       log.info("Crawler for portal 90minut.pl started manually.");
+      ninetyMinutesFacade.runCrawler();
       return ResponseEntity.accepted().build();
     } catch (Exception e) {
       log.warn(e.getMessage());
@@ -45,8 +45,8 @@ class CrawlersController {
   })
   @PostMapping("/stop/90minutes")
   ResponseEntity<Void> stopCrawler() {
-    ninetyMinutesFacade.stopCrawler();
     log.info("Crawler for portal 90minut.pl stopped manually.");
+    ninetyMinutesFacade.stopCrawler();
     return ResponseEntity.ok().build();
   }
 

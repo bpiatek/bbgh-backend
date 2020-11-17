@@ -24,4 +24,8 @@ public class Player {
   private String lastName;
   private String currentTeam;
   private LocalDate dateOfBirth;
+
+  public String getFullName() {
+    return firstName + " " + lastName;
+  }
 }
