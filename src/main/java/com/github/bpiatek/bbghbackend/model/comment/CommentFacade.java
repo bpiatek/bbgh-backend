@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Bartosz Piatek on 26/07/2020
@@ -22,10 +21,5 @@ public class CommentFacade {
 
   public Page<Comment> findByArticleId(Long articleId, Pageable pageable) {
     return commentRepository.findByArticleId(articleId, pageable);
-  }
-
-  @Transactional
-  public int setCommentOpinionStatus(Long id, CommentOpinionStatus status) {
-    return commentRepository.setCommentOpinionStatusById(id, status);
   }
 }

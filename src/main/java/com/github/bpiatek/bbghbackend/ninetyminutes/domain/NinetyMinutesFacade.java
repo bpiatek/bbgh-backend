@@ -24,7 +24,6 @@ public class NinetyMinutesFacade {
   }
 
   public void runPlayersCrawler() {
-    log.info("Crawling for PLAYERS...");
     playerCrawler.startCrawlingForPlayers();
   }
 }

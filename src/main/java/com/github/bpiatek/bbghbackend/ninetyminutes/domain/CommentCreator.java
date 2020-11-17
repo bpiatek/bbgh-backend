@@ -1,6 +1,5 @@
 package com.github.bpiatek.bbghbackend.ninetyminutes.domain;
 
-import static com.github.bpiatek.bbghbackend.model.comment.CommentOpinionStatus.NOT_CHECKED;
 import static org.jsoup.Jsoup.parse;
 
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
@@ -24,7 +23,6 @@ class CommentCreator {
         .author(matcher.group("author"))
         .content(parse(matcher.group("content")).text())
         .dateAdded(localDateTimeParser.parseToLocalDateTime(matcher.group("date")))
-        .commentOpinionStatus(NOT_CHECKED)
         .build();
   }
 }

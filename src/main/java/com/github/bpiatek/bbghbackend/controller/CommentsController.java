@@ -4,7 +4,6 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
-import com.github.bpiatek.bbghbackend.model.comment.api.CommentOpinionRequest;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
@@ -41,16 +40,6 @@ class CommentsController {
   @GetMapping("comment/{commentId}")
   ResponseEntity<Comment> getCommentById(@PathVariable Long commentId) {
     return ResponseEntity.ok().body(commentFacade.findById(commentId));
-  }
-
-  @ApiOperation(value = "Set commentOpinionStatus for a comment")
-  @ApiResponses(value = {
-      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully set comment opinion status"),
-  })
-  @PostMapping("comment/{commentId}/status")
-  ResponseEntity<Void> setCommentOpinionStatus(@PathVariable Long commentId, @RequestBody CommentOpinionRequest opinionRequest) {
-    commentFacade.setCommentOpinionStatus(commentId, opinionRequest.getStatus());
-    return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "Get all mentions for given comment")

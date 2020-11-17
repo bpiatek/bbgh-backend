@@ -21,8 +21,8 @@ class CrawlersScheduler {
   // everyday at 23:59
   @Scheduled(cron = "0 59 23 * * ?")
   public void run90MinutesCrawler() throws Exception {
-    ninetyMinutesFacade.runCrawler();
     log.info("90minutes.pl crawler started on schedule");
+    ninetyMinutesFacade.runCrawler();
   }
 
 }
