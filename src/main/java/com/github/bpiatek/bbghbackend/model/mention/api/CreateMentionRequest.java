@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.mention.api;
 
 import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,10 +10,11 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateMentionRequest {
-  Long commentId;
-  Long playerId;
-  MentionSentiment sentiment;
-  int startsAt;
-  int endsAt;
+  private Long commentId;
+  private Long playerId;
+  private MentionSentiment sentiment;
+  private int startsAt;
+  private int endsAt;
 }

@@ -23,20 +23,20 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/api/players")
-public class PlayersController {
+class PlayersController {
   private final PlayerFacade playerFacade;
 
   public PlayersController(PlayerFacade playerFacade) {
     this.playerFacade = playerFacade;
   }
 
-  @ApiOperation(value = "Search players")
+  @ApiOperation(value = "Get all players")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all players"),
   })
   @ApiPageable
   @GetMapping
-  Page<Player> searchPlayers(@ApiIgnore Pageable pageable) {
-    return playerFacade.list(pageable);
+  Page<Player> findAll(@ApiIgnore Pageable pageable) {
+    return playerFacade.findAll(pageable);
   }
 }

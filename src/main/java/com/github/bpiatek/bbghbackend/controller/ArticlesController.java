@@ -2,11 +2,10 @@ package com.github.bpiatek.bbghbackend.controller;
 
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
-import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
-import com.github.bpiatek.bbghbackend.model.article.search.ArticleSearchResult;
-import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.article.Article;
+import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
+import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.extern.log4j.Log4j2;
@@ -34,15 +33,14 @@ class ArticlesController {
     this.commentFacade = commentFacade;
   }
 
-  @ApiOperation(value = "Search articles")
+  @ApiOperation(value = "Get all articles")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all articles"),
   })
-  @ApiImplicitParam(name = "query", dataType = "string", paramType = "query", value = "negative < 20, comments > 40, creationDate > 2020-01-01")
   @ApiPageable
   @GetMapping
-  Page<ArticleSearchResult> searchArticles(@ApiIgnore Pageable pageable, @ApiIgnore @RequestParam(value = "query", required = false) String query) {
-    return articleFacade.search(pageable, query);
+  Page<Article> getAllArticles(@ApiIgnore Pageable pageable) {
+    return articleFacade.findAll(pageable);
   }
 
   @ApiOperation(value = "Get article by ID")

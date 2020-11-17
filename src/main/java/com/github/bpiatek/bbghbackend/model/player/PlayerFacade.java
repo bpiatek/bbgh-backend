@@ -27,7 +27,7 @@ public class PlayerFacade {
     return playerRepository.findLastPlayerIdRead();
   }
 
-  public Page<Player> list(Pageable pageable) {
+  public Page<Player> findAll(Pageable pageable) {
     return playerRepository.findAll(pageable);
   }
 }
