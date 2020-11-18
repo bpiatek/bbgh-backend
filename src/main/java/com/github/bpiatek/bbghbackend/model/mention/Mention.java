@@ -49,6 +49,8 @@ public class Mention {
         .playerId(this.player.getId())
         .playerFullName(this.player.getFullName())
         .mentionSentiment(this.sentiment)
+        .startsAt(this.startsAt)
+        .endsAt(this.endsAt)
         .build();
   }
 

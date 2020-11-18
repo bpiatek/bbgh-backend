@@ -20,4 +20,6 @@ public class MentionResponse {
   Long playerId;
   String playerFullName;
   MentionSentiment mentionSentiment;
+  Integer startsAt;
+  Integer endsAt;
 }
