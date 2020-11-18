@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,4 +20,16 @@ interface PlayerRepository extends Repository<Player, Long> {
   Integer findLastPlayerIdRead();
 
   Page<Player> findAll(Pageable pageable);
+
+  @Query(value = "SELECT DISTINCT last_name FROM Player", nativeQuery = true)
+  List<String> findDistinctLastNames();
+
+  @Query(value = "SELECT DISTINCT first_name FROM Player", nativeQuery = true)
+  List<String> findDistinctFirstNames();
+
+  Page<Player> findAllByFirstName(String firstName, Pageable pageable);
+
+  Page<Player> findAllByLastName(String lastName, Pageable pageable);
+
+  Page<Player> findAllByFirstNameAndLastName(String firstName, String lastName, Pageable pageable);
 }

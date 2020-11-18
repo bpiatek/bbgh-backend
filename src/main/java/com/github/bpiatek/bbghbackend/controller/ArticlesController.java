@@ -19,7 +19,7 @@ import springfox.documentation.annotations.ApiIgnore;
  * Created by Bartosz Piatek on 12/07/2020
  */
 @Log4j2
-@Api(tags = "Articles and comments controller")
+@Api(tags = "Articles controller")
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/api/articles")
