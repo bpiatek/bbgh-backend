@@ -47,3 +47,4 @@ public class MentionFacade {
     return mentionRepository.setMentionSentimentById(id, sentiment);
   }
 }
+
