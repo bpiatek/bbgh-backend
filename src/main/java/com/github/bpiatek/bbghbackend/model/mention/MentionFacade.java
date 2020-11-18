@@ -30,12 +30,14 @@ public class MentionFacade {
   }
 
   public Page<MentionResponse> findAll(Pageable pageable) {
-    List<MentionResponse> mentions = mentionRepository.findAll(pageable)
+    Page<Mention> mentionsPageable = mentionRepository.findAll(pageable);
+
+    List<MentionResponse> mentions = mentionsPageable
         .get()
         .map(Mention::toMentionResponse)
         .collect(toList());
 
-    return new PageImpl<>(mentions, pageable, mentions.size());
+    return new PageImpl<>(mentions, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
   }
 
   public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {
