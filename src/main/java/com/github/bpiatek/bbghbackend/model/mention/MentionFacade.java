@@ -35,7 +35,7 @@ public class MentionFacade {
         .map(Mention::toMentionResponse)
         .collect(toList());
 
-    return new PageImpl<>(mentions);
+    return new PageImpl<>(mentions, pageable, mentions.size());
   }
 
   public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {
