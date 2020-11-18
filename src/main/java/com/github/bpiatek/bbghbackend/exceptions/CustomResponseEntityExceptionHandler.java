@@ -6,6 +6,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.github.bpiatek.bbghbackend.model.article.ArticleNotFoundException;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentNotFoundException;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionNotFoundException;
+import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,24 @@ class CustomResponseEntityExceptionHandler {
         .status(NOT_FOUND)
         .body(ErrorResponse.builder()
                   .message("Comment with ID: " + ex.getId() + " not found")
+                  .build());
+  }
+
+  @ExceptionHandler(PlayerNotFoundException.class)
+  ResponseEntity<ErrorResponse> handlePlayerNotFoundException(PlayerNotFoundException ex) {
+    return ResponseEntity
+        .status(NOT_FOUND)
+        .body(ErrorResponse.builder()
+                  .message("Player with ID: " + ex.getId() + " not found")
+                  .build());
+  }
+
+  @ExceptionHandler(MentionNotFoundException.class)
+  ResponseEntity<ErrorResponse> handleMentionNotFoundException(MentionNotFoundException ex) {
+    return ResponseEntity
+        .status(NOT_FOUND)
+        .body(ErrorResponse.builder()
+                  .message("Mention with ID: " + ex.getId() + " not found")
                   .build());
   }
 

@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-public interface MentionRepository extends Repository<Mention, Long> {
+interface MentionRepository extends Repository<Mention, Long> {
   Mention save(Mention player);
 
   Page<Mention> findByCommentId(Long commentId, Pageable pageable);

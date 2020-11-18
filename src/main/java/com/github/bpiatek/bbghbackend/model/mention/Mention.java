@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.mention;
 
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.Player;
 import lombok.*;
 
@@ -37,6 +38,19 @@ public class Mention {
    */
   private int startsAt;
   private int endsAt;
+
+  public MentionResponse toMentionResponse() {
+    return MentionResponse.builder()
+        .id(this.id)
+        .commentId(this.comment.getId())
+        .commentContent(this.comment.getContent())
+        .commentDate(this.comment.getDateAdded())
+        .articleId(this.comment.getArticle().getId())
+        .playerId(this.player.getId())
+        .playerFullName(this.player.getFullName())
+        .mentionSentiment(this.sentiment)
+        .build();
+  }
 
   @Override
   public String toString() {

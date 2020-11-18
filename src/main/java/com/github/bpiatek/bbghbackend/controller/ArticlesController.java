@@ -49,7 +49,7 @@ class ArticlesController {
   })
   @GetMapping("{articleId}")
   ResponseEntity<Article> getArticleById(@PathVariable Long articleId) {
-    return ResponseEntity.ok().body(articleFacade.findById(articleId));
+    return ResponseEntity.ok(articleFacade.findById(articleId));
   }
 
   @ApiOperation(value = "Get all comments for given article")
