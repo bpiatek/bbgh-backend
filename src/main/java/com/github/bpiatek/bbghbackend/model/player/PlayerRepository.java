@@ -12,6 +12,7 @@ import java.util.Optional;
  */
 interface PlayerRepository extends Repository<Player, Long> {
   Player save(Player player);
+
   Optional<Player> findById(Long id);
 
   @Query(value = "SELECT max(player.url_id) FROM player", nativeQuery = true)

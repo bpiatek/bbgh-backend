@@ -1,10 +1,17 @@
 package com.github.bpiatek.bbghbackend.model.mention;
 
+import static java.util.stream.Collectors.toList;
+
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionNotFoundException;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -18,8 +25,17 @@ public class MentionFacade {
     return mentionRepository.save(player);
   }
 
-  public Page<Mention> findAll(Pageable pageable) {
-    return mentionRepository.findAll(pageable);
+  public Mention findById(Long id) {
+    return mentionRepository.findById(id).orElseThrow(() -> new MentionNotFoundException(id));
+  }
+
+  public Page<MentionResponse> findAll(Pageable pageable) {
+    List<MentionResponse> mentions = mentionRepository.findAll(pageable)
+        .get()
+        .map(Mention::toMentionResponse)
+        .collect(toList());
+
+    return new PageImpl<>(mentions);
   }
 
   public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {

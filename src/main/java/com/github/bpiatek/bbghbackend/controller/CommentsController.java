@@ -40,7 +40,7 @@ class CommentsController {
   })
   @GetMapping("comment/{commentId}")
   ResponseEntity<CommentResponse> getCommentById(@PathVariable Long commentId) {
-    return ResponseEntity.ok().body(commentFacade.findById(commentId).toCommentResponse());
+    return ResponseEntity.ok(commentFacade.findById(commentId).toCommentResponse());
   }
 
   @ApiOperation(value = "Get all mentions for given comment")

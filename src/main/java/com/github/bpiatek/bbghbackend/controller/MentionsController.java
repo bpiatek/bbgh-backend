@@ -9,6 +9,7 @@ import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.model.mention.api.CreateMentionRequest;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
@@ -36,13 +37,23 @@ class MentionsController {
   private final CommentFacade commentFacade;
   private final PlayerFacade playerFacade;
 
-  @ApiOperation(value = "Find all mentions")
+  @ApiOperation(value = "Get mention by ID")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved mention by ID"),
+  })
+  @ApiPageable
+  @GetMapping("{id}")
+  ResponseEntity<MentionResponse> getMentionById(@PathVariable Long id) {
+    return ResponseEntity.ok(mentionFacade.findById(id).toMentionResponse());
+  }
+
+  @ApiOperation(value = "Get all mentions")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions"),
   })
   @ApiPageable
   @GetMapping
-  Page<Mention> findAllMentions(@ApiIgnore Pageable pageable) {
+  Page<MentionResponse> getAllMentions(@ApiIgnore Pageable pageable) {
     return mentionFacade.findAll(pageable);
   }
 
