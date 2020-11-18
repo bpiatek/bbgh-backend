@@ -17,6 +17,9 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
@@ -50,5 +53,16 @@ class PlayersController {
   @GetMapping
   Page<Player> getAll(@ApiIgnore Pageable pageable) {
     return playerFacade.findAll(pageable);
+  }
+
+  @ApiOperation(value = "Search for players")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved searched players"),
+  })
+  @ApiPageable
+  @GetMapping("search")
+  Page<Player> findByName(@RequestParam String s, @ApiIgnore Pageable pageable) {
+
+   return playerFacade.search(s, pageable);
   }
 }

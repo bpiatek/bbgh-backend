@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class PlayerFacade {
 
   private final PlayerRepository playerRepository;
+  private final PlayerSearcher playerSearcher;
 
   public Player save(Player player) {
     return playerRepository.save(player);
@@ -29,5 +30,9 @@ public class PlayerFacade {
 
   public Page<Player> findAll(Pageable pageable) {
     return playerRepository.findAll(pageable);
+  }
+
+  public Page<Player> search(String text, Pageable pageable) {
+    return playerSearcher.search(text, pageable);
   }
 }
