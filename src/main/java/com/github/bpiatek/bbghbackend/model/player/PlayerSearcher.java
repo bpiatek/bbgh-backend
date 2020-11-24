@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import java.util.Optional;
 /**
  * Created by Bartosz Piatek on 18/11/2020
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
 class PlayerSearcher {
@@ -20,6 +22,7 @@ class PlayerSearcher {
   private final PlayerRepository playerRepository;
 
   public Page<Player> search(String text, Pageable pageable) {
+    log.info("Searching for player: {}", text);
     Optional<String> firstName = getFirstName(text);
     Optional<String> lastName = getLastName(text);
 

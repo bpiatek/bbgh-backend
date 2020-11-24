@@ -25,12 +25,12 @@ public class CommentFacade {
   }
 
   public Page<CommentResponse> findByArticleId(Long articleId, Pageable pageable) {
-    final Page<Comment> byArticleId = commentRepository.findByArticleId(articleId, pageable);
+    final Page<Comment> commentsPageable = commentRepository.findByArticleId(articleId, pageable);
 
-    final List<CommentResponse> collect = byArticleId.get()
+    final List<CommentResponse> comments = commentsPageable.get()
         .map(Comment::toCommentResponse)
         .collect(Collectors.toList());
 
-    return new PageImpl<>(collect);
+    return new PageImpl<>(comments, commentsPageable.getPageable(), commentsPageable.getTotalElements());
   }
 }

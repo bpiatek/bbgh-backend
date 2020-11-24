@@ -64,6 +64,10 @@ class MentionsController {
   @PostMapping
   ResponseEntity<Mention> createMention(@RequestBody CreateMentionRequest createMentionRequest) {
 
+    log.info("Creating mention for player with ID: {} in comment with ID: {}",
+        createMentionRequest.getPlayerId(),
+        createMentionRequest.getCommentId());
+
     Mention mention = Mention.builder()
         .comment(commentFacade.findById(createMentionRequest.getCommentId()))
         .player(playerFacade.findById(createMentionRequest.getPlayerId()))
@@ -72,8 +76,9 @@ class MentionsController {
         .endsAt(createMentionRequest.getEndsAt())
         .build();
 
-    this.mentionFacade.save(mention);
-    return ResponseEntity.status(CREATED).body(mention);
+    Mention savedMention = mentionFacade.save(mention);
+
+    return ResponseEntity.status(CREATED).body(savedMention);
   }
 
   @ApiOperation(value = "Set sentiment for given mention")
