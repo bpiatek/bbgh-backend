@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionNotFoundException;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,13 +17,20 @@ import java.util.List;
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
+@Log4j2
 @Service
 @AllArgsConstructor
 public class MentionFacade {
   private final MentionRepository mentionRepository;
 
   public Mention save(Mention player) {
-    return mentionRepository.save(player);
+    Mention mention = mentionRepository.save(player);
+    log.info("Mention with ID: {} saved! Player ID: {}, comment ID: {}",
+             mention.getId(),
+             mention.getPlayer().getId(),
+             mention.getComment().getId());
+
+    return mention;
   }
 
   public Mention findById(Long id) {
@@ -46,6 +54,7 @@ public class MentionFacade {
 
   @Transactional
   public int setSentiment(Long id, MentionSentiment sentiment) {
+    log.info("Setting mention (ID: {}) sentiment to: {}", id, sentiment.toString());
     return mentionRepository.setMentionSentimentById(id, sentiment);
   }
 }
