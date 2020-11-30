@@ -21,14 +21,17 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class MentionFacade {
+
   private final MentionRepository mentionRepository;
 
   public Mention save(Mention player) {
     Mention mention = mentionRepository.save(player);
-    log.info("Mention with ID: {} saved! Player ID: {}, comment ID: {}",
-             mention.getId(),
-             mention.getPlayer().getId(),
-             mention.getComment().getId());
+    log.info(
+        "Mention with ID: {} saved! Player ID: {}, comment ID: {}",
+        mention.getId(),
+        mention.getPlayer().getId(),
+        mention.getComment().getId()
+    );
 
     return mention;
   }
@@ -37,15 +40,12 @@ public class MentionFacade {
     return mentionRepository.findById(id).orElseThrow(() -> new MentionNotFoundException(id));
   }
 
-  public Page<MentionResponse> findAll(Pageable pageable) {
-    Page<Mention> mentionsPageable = mentionRepository.findAll(pageable);
-
-    List<MentionResponse> mentions = mentionsPageable
-        .get()
-        .map(Mention::toMentionResponse)
-        .collect(toList());
-
-    return new PageImpl<>(mentions, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
+  public Page<MentionResponse> search(Pageable pageable, List<MentionSentiment> sentiments) {
+    if (sentiments != null) {
+      return findBySentiments(pageable, sentiments);
+    } else {
+      return findAll(pageable);
+    }
   }
 
   public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {
@@ -56,6 +56,31 @@ public class MentionFacade {
   public int setSentiment(Long id, MentionSentiment sentiment) {
     log.info("Setting mention (ID: {}) sentiment to: {}", id, sentiment.toString());
     return mentionRepository.setMentionSentimentById(id, sentiment);
+  }
+
+  private Page<MentionResponse> findBySentiments(Pageable pageable, List<MentionSentiment> sentiments) {
+    Page<Mention> mentionsWithSentimentsPageable = mentionRepository.findBySentimentIn(pageable, sentiments);
+    List<MentionResponse> mentions = toMentionResponseList(mentionsWithSentimentsPageable);
+
+    return new PageImpl<>(mentions, mentionsWithSentimentsPageable.getPageable(), mentionsWithSentimentsPageable.getTotalElements());
+  }
+
+  private Page<MentionResponse> findAll(Pageable pageable) {
+    Page<Mention> mentionsPageable = mentionRepository.findAll(pageable);
+
+    List<MentionResponse> mentions = mentionsPageable
+        .get()
+        .map(Mention::toMentionResponse)
+        .collect(toList());
+
+    return new PageImpl<>(mentions, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
+  }
+
+  private List<MentionResponse> toMentionResponseList(Page<Mention> mentions) {
+    return mentions
+        .get()
+        .map(Mention::toMentionResponse)
+        .collect(toList());
   }
 }
 
