@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ArticleFacade {
 
+  private final Clock clock;
   private final ArticleRepository articleRepository;
 
   public Article findById(Long id) {
@@ -30,5 +33,10 @@ public class ArticleFacade {
 
   public Article save(Article article) {
     return articleRepository.save(article);
+  }
+
+  public List<Article> findArticlesMaxThreeDaysOld() {
+    final LocalDateTime threeDaysAgo = LocalDateTime.now(clock).minusDays(3);
+    return articleRepository.findAllWithDateAfter(threeDaysAgo);
   }
 }
