@@ -28,6 +28,7 @@ public class Article {
   private String url;
   private String title;
   private LocalDateTime creationDate;
+  private LocalDateTime updatedAt;
   private String content;
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
