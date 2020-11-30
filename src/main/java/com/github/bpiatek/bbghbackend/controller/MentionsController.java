@@ -55,9 +55,12 @@ class MentionsController {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions"),
   })
   @ApiPageable
+  @ApiImplicitParam(name = "ids", dataType = "array", paramType = "query", value = "Players ids. \n If you want to pass multiple ids separate them by commas ','")
   @GetMapping
-  Page<MentionResponse> search(@ApiIgnore Pageable pageable, @RequestParam(required = false) List<MentionSentiment> sentiments) {
-    return mentionFacade.search(pageable, sentiments);
+  Page<MentionResponse> search(@ApiIgnore Pageable pageable,
+                               @RequestParam(required = false) List<MentionSentiment> sentiments,
+                               @RequestParam(required = false) List<Long> ids) {
+    return mentionFacade.search(pageable, sentiments, ids);
   }
 
   @ApiOperation(value = "Create mention.")
