@@ -26,12 +26,10 @@ public class MentionFacade {
 
   public Mention save(Mention player) {
     Mention mention = mentionRepository.save(player);
-    log.info(
-        "Mention with ID: {} saved! Player ID: {}, comment ID: {}",
+    log.info("Mention with ID: {} saved! Player ID: {}, comment ID: {}",
         mention.getId(),
         mention.getPlayer().getId(),
-        mention.getComment().getId()
-    );
+        mention.getComment().getId());
 
     return mention;
   }
@@ -40,9 +38,11 @@ public class MentionFacade {
     return mentionRepository.findById(id).orElseThrow(() -> new MentionNotFoundException(id));
   }
 
-  public Page<MentionResponse> search(Pageable pageable, List<MentionSentiment> sentiments) {
+  public Page<MentionResponse> search(Pageable pageable, List<MentionSentiment> sentiments, List<Long> ids) {
     if (sentiments != null) {
       return findBySentiments(pageable, sentiments);
+    } else if (ids != null) {
+      return findByPlayersIds(pageable, ids);
     } else {
       return findAll(pageable);
     }
@@ -63,6 +63,13 @@ public class MentionFacade {
     List<MentionResponse> mentions = toMentionResponseList(mentionsWithSentimentsPageable);
 
     return new PageImpl<>(mentions, mentionsWithSentimentsPageable.getPageable(), mentionsWithSentimentsPageable.getTotalElements());
+  }
+
+  private Page<MentionResponse> findByPlayersIds(Pageable pageable, List<Long> ids) {
+    Page<Mention> mentionsWithPlayersIdsPageable = mentionRepository.findByPlayerIdIn(pageable, ids);
+    List<MentionResponse> mentions = toMentionResponseList(mentionsWithPlayersIdsPageable);
+
+    return new PageImpl<>(mentions, mentionsWithPlayersIdsPageable.getPageable(), mentionsWithPlayersIdsPageable.getTotalElements());
   }
 
   private Page<MentionResponse> findAll(Pageable pageable) {
