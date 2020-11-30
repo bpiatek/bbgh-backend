@@ -7,6 +7,7 @@ import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,16 +21,22 @@ class ArticleCreator {
   private final NinetyMinutesCommentsExtractor commentsExtractor;
 
   Article createFromPage(Page page, HtmlParseData htmlParseData) {
-    final String html = htmlParseData.getHtml();
+    String html = htmlParseData.getHtml();
+    LocalDateTime articleCreationDate = articleExtractor.getArticleDateTime(html);
 
-    final Article article = Article.builder()
+    Article article = Article.builder()
         .url(page.getWebURL().getURL())
         .title(htmlParseData.getTitle())
         .content(articleExtractor.getArticleContentAsText(html))
-        .creationDate(articleExtractor.getArticleDateTime(html))
+        .creationDate(articleCreationDate)
+        /* TODO
+         kiedy zostanie zaimplementowane pobieranie nowych komentarzy do istniejącego artykułu
+         popraw tą funkcjonalność
+        */
+        .updatedAt(articleCreationDate)
         .build();
 
-    final List<Comment> comments = commentsExtractor.getComments(html);
+    List<Comment> comments = commentsExtractor.getComments(html);
     comments.forEach(comment -> comment.setArticle(article));
 
     article.setComments(comments);
