@@ -23,3 +23,6 @@ logging:
 90minutes:
   players:
     number: 42587
+
+article:
+  daysback: 3
