@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,6 +21,8 @@ interface MentionRepository extends Repository<Mention, Long> {
   Optional<Mention> findById(Long id);
 
   Page<Mention> findAll(Pageable pageable);
+
+  Page<Mention> findBySentimentIn(Pageable pageable, List<MentionSentiment> sentiments);
 
   @Modifying
   @Query("UPDATE Mention m SET m.sentiment = :sentiment WHERE m.id = :id")

@@ -8,6 +8,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
+import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
 import com.github.bpiatek.bbghbackend.model.mention.api.CreateMentionRequest;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -47,14 +50,14 @@ class MentionsController {
     return ResponseEntity.ok(mentionFacade.findById(id).toMentionResponse());
   }
 
-  @ApiOperation(value = "Get all mentions")
+  @ApiOperation(value = "Search for mentions")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions"),
   })
   @ApiPageable
   @GetMapping
-  Page<MentionResponse> getAllMentions(@ApiIgnore Pageable pageable) {
-    return mentionFacade.findAll(pageable);
+  Page<MentionResponse> search(@ApiIgnore Pageable pageable, @RequestParam(required = false) List<MentionSentiment> sentiments) {
+    return mentionFacade.search(pageable, sentiments);
   }
 
   @ApiOperation(value = "Create mention.")
