@@ -73,7 +73,7 @@ class NinetyMinutesCrawler extends WebCrawler {
       return true;
     }
 
-    return articleFacade.findArticlesMaxThreeDaysOld()
+    return articleFacade.findArticlesNDaysOld()
         .stream()
         .anyMatch(article -> article.getUrl().equalsIgnoreCase(url));
   }
