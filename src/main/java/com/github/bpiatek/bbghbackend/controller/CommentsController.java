@@ -49,7 +49,7 @@ class CommentsController {
   })
   @ApiPageable
   @GetMapping("comment/{commentId}/mentions")
-  Page<Mention> getAllMentionsForCommentPageable(@PathVariable Long commentId, @ApiIgnore Pageable pageable) {
+  Page<Mention> getAllMentionsForComment(@PathVariable Long commentId, @ApiIgnore Pageable pageable) {
     return mentionFacade.findByCommentId(commentId, pageable);
   }
 }

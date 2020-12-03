@@ -1,7 +1,8 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,8 +10,9 @@ import org.springframework.stereotype.Service;
 /**
  * Created by Bartosz Piatek on 12/10/2020
  */
+@Log4j2
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PlayerFacade {
 
   private final PlayerRepository playerRepository;
@@ -21,10 +23,12 @@ public class PlayerFacade {
   }
 
   public Player findById(Long id) {
+    log.debug("Looking for PLAYER with ID: {}", id);
     return playerRepository.findById(id).orElseThrow(() -> new PlayerNotFoundException(id));
   }
 
   public Integer findLastSavedPlayer() {
+    log.debug("Find last saved PLAYER ID in database");
     return playerRepository.findLastPlayerIdRead();
   }
 

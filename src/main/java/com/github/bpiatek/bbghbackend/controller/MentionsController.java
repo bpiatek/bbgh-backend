@@ -1,18 +1,15 @@
 package com.github.bpiatek.bbghbackend.controller;
 
-import static com.github.bpiatek.bbghbackend.model.mention.MentionSentiment.NOT_CHECKED;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_201_Created;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
-import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
-import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
 import com.github.bpiatek.bbghbackend.model.mention.api.CreateMentionRequest;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
-import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -37,8 +35,6 @@ import java.util.List;
 class MentionsController {
 
   private final MentionFacade mentionFacade;
-  private final CommentFacade commentFacade;
-  private final PlayerFacade playerFacade;
 
   @ApiOperation(value = "Get mention by ID")
   @ApiResponses(value = {
@@ -68,23 +64,13 @@ class MentionsController {
       @ApiResponse(code = ORDINAL_201_Created, message = "Successfully created mention"),
   })
   @PostMapping
-  ResponseEntity<Mention> createMention(@RequestBody CreateMentionRequest createMentionRequest) {
+  ResponseEntity<MentionResponse> createMention(@RequestBody CreateMentionRequest request) {
+    Optional<MentionResponse> response = mentionFacade.createAndSaveMention(request);
+    response.ifPresent(mentionFacade::logMentionSaved);
 
-    log.info("Creating mention for player with ID: {} in comment with ID: {}",
-        createMentionRequest.getPlayerId(),
-        createMentionRequest.getCommentId());
-
-    Mention mention = Mention.builder()
-        .comment(commentFacade.findById(createMentionRequest.getCommentId()))
-        .player(playerFacade.findById(createMentionRequest.getPlayerId()))
-        .sentiment(createMentionRequest.getSentiment() != null ? createMentionRequest.getSentiment() : NOT_CHECKED)
-        .startsAt(createMentionRequest.getStartsAt())
-        .endsAt(createMentionRequest.getEndsAt())
-        .build();
-
-    Mention savedMention = mentionFacade.save(mention);
-
-    return ResponseEntity.status(CREATED).body(savedMention);
+    return response
+        .map(mention -> ResponseEntity.status(CREATED).body(mention))
+        .orElse(ResponseEntity.status(BAD_REQUEST).build());
   }
 
   @ApiOperation(value = "Set sentiment for given mention")

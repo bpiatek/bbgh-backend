@@ -22,7 +22,6 @@ class PlayerSearcher {
   private final PlayerRepository playerRepository;
 
   public Page<Player> search(String text, Pageable pageable) {
-    log.info("Searching for player: {}", text);
     Optional<String> firstName = getFirstName(text);
     Optional<String> lastName = getLastName(text);
 
@@ -47,10 +46,13 @@ class PlayerSearcher {
 
   private Page<Player> searchForPlayers(Optional<String> firstName, Optional<String> lastName, Pageable pageable) {
     if (firstAndLastNameIsPresent(firstName, lastName)) {
+      log.info("Searching for PLAYER with firstName: {} and lastName: {}", firstName, lastName);
       return playerRepository.findAllByFirstNameAndLastName(firstName.get(), lastName.get(), pageable);
     } else if (onlyFirstNameIsPresent(firstName, lastName)) {
+      log.info("Searching for PLAYER with firstName: {}", lastName);
       return playerRepository.findAllByFirstName(firstName.get(), pageable);
     } else if (onlyLastNameIsPresent(firstName, lastName)) {
+      log.info("Searching for PLAYER with lastName: {}", lastName);
       return playerRepository.findAllByLastName(lastName.get(), pageable);
     } else {
       return new PageImpl<>(new ArrayList<>());

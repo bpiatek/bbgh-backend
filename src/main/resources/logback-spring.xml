@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT-INFO" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT-ERROR" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
         <encoder>
             <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="SAVE-TO-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="com.github.bpiatek.bbghbackend.utils.LoggerFilter">
+            <levels>INFO|DEBUG|WARN|ERROR</levels>
+        </filter>
         <file>${LOG_PATH}/bbgh-backend.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</Pattern>
@@ -20,8 +39,9 @@
         </rollingPolicy>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="STDOUT" />
+    <root level="debug">
+        <appender-ref ref="STDOUT-INFO" />
+        <appender-ref ref="STDOUT-ERROR" />
         <appender-ref ref="SAVE-TO-FILE" />
     </root>
 </configuration>
