@@ -1,6 +1,6 @@
 package com.github.bpiatek.bbghbackend.model.article;
 
-import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Created by Bartosz Piatek on 26/07/2020
  */
+@Log4j2
 @Service
 public class ArticleFacade {
 
@@ -29,6 +30,7 @@ public class ArticleFacade {
   }
 
   public Article findById(Long id) {
+
     return articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
   }
 

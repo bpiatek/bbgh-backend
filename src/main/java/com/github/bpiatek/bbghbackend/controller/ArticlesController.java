@@ -8,6 +8,7 @@ import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,15 +24,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/api/articles")
+@RequiredArgsConstructor
 class ArticlesController {
 
   private final ArticleFacade articleFacade;
   private final CommentFacade commentFacade;
-
-  ArticlesController(ArticleFacade articleFacade, CommentFacade commentFacade) {
-    this.articleFacade = articleFacade;
-    this.commentFacade = commentFacade;
-  }
 
   @ApiOperation(value = "Get all articles")
   @ApiResponses(value = {

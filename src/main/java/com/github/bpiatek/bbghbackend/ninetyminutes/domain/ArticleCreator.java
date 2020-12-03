@@ -36,9 +36,9 @@ class ArticleCreator {
   }
 
   private Article updateExistingArticle(Article article, String html) {
+    log.info("Searching for new comments for article ID: {} extracted at: {}", article.getId(), article.getCreationDate());
     List<Comment> comments = commentsExtractor.getComments(html);
     if(!comments.isEmpty()) {
-      log.info("Searching for new comments for article ID: {} extracted at: {}", article.getId(), article.getCreationDate());
       article.setUpdatedAt(LocalDateTime.now(clock));
     }
     comments.forEach(comment -> comment.setArticle(article));

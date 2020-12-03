@@ -55,7 +55,6 @@ class PlayersController {
   @ApiPageable
   @GetMapping("search")
   Page<Player> findByName(@RequestParam String s, @ApiIgnore Pageable pageable) {
-
    return playerFacade.search(s, pageable);
   }
 }
