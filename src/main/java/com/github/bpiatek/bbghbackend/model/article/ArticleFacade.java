@@ -35,9 +35,12 @@ public class ArticleFacade {
   }
 
   public Page<Article> search(Pageable pageable, LocalDateTime updatedAfter, LocalDateTime newAfter) {
+    log.debug("Searching for ARTICLES...");
     if(updatedAfter != null) {
+      log.debug("Looking for ARTICLES updated after: {}", updatedAfter);
       return articleRepository.findAllByUpdatedAtAfter(pageable, updatedAfter);
     } else if (newAfter != null) {
+      log.debug("Looking for ARTICLES created after: {}", newAfter);
       return articleRepository.findAllByCreationDateAfter(pageable, newAfter);
     } else {
       return articleRepository.findAll(pageable);
@@ -45,6 +48,7 @@ public class ArticleFacade {
   }
 
   public List<Article> findByUrl(String url) {
+    log.debug("Searching for ARTICLE by URL: {}", url);
     return articleRepository.findByUrl(url);
   }
 
@@ -53,6 +57,7 @@ public class ArticleFacade {
   }
 
   public List<Article> findArticlesNDaysOld() {
+    log.debug("Looking for ARTICLES {} days old", daysBack);
     final LocalDateTime threeDaysAgo = LocalDateTime.now(clock).minusDays(daysBack);
     return articleRepository.findAllWithDateAfter(threeDaysAgo);
   }
