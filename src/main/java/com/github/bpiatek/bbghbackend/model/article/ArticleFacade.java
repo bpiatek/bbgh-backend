@@ -19,7 +19,7 @@ public class ArticleFacade {
 
   private final Clock clock;
   private final ArticleRepository articleRepository;
-  private Integer daysBack;
+  private final Integer daysBack;
 
   public ArticleFacade(ArticleRepository articleRepository,
                        @Value("${article.daysback}")Integer daysBack,
@@ -34,8 +34,14 @@ public class ArticleFacade {
     return articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
   }
 
-  public Page<Article> findAll(Pageable pageable) {
-    return articleRepository.findAll(pageable);
+  public Page<Article> search(Pageable pageable, LocalDateTime updatedAfter, LocalDateTime newAfter) {
+    if(updatedAfter != null) {
+      return articleRepository.findAllByUpdatedAtAfter(pageable, updatedAfter);
+    } else if (newAfter != null) {
+      return articleRepository.findAllByCreationDateAfter(pageable, newAfter);
+    } else {
+      return articleRepository.findAll(pageable);
+    }
   }
 
   public List<Article> findByUrl(String url) {

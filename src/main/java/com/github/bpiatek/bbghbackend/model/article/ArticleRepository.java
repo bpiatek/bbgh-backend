@@ -19,6 +19,10 @@ interface ArticleRepository extends Repository<Article, Long> {
 
   Page<Article> findAll(Pageable pageable);
 
+  Page<Article> findAllByUpdatedAtAfter(Pageable pageable, LocalDateTime after);
+
+  Page<Article> findAllByCreationDateAfter(Pageable pageable, LocalDateTime after);
+
   List<Article> findByUrl(String url);
 
   Optional<Article> findById(Long id);

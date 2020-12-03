@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.controller;
 
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 import com.github.bpiatek.bbghbackend.model.article.Article;
 import com.github.bpiatek.bbghbackend.model.article.ArticleFacade;
@@ -12,9 +13,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.time.LocalDateTime;
 
 /**
  * Created by Bartosz Piatek on 12/07/2020
@@ -34,10 +38,20 @@ class ArticlesController {
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all articles"),
   })
-  @ApiPageable
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "updatedAfter", dataType = "string", paramType = "query", value = "Date after which you want to see updated articles e.g. 2020-11-20T12:20:12"),
+      @ApiImplicitParam(name = "newAfter", dataType = "string", paramType = "query", value = "Date after which you want to see new articles e.g. 2020-11-20T12:20:12."),
+      @ApiImplicitParam(name = "page", dataType = "int", paramType = "query", defaultValue = "0", value = "Results page you want to retrieve (0..N)"),
+      @ApiImplicitParam(name = "size", dataType = "int", paramType = "query", defaultValue = "20", value = "Number of records per page."),
+      @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query", value = "Sorting criteria in the format: property(,asc|desc). "
+                                                                                                               + "Default sort order is ascending. " + "Multiple sort criteria are supported.")
+  })
   @GetMapping
-  Page<Article> getAllArticles(@ApiIgnore Pageable pageable) {
-    return articleFacade.findAll(pageable);
+  Page<Article> getAllArticles(@ApiIgnore Pageable pageable,
+                               // example of localDateTime: 2020-11-20T12:20:12
+                               @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime updatedAfter,
+                               @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) LocalDateTime newAfter) {
+    return articleFacade.search(pageable, updatedAfter, newAfter);
   }
 
   @ApiOperation(value = "Get article by ID")
