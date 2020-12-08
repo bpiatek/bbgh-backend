@@ -1,5 +1,6 @@
 package com.github.bpiatek.bbghbackend.model.article;
 
+import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Bartosz Piatek on 26/07/2020
@@ -20,6 +22,7 @@ public class ArticleFacade {
   private final Clock clock;
   private final ArticleRepository articleRepository;
   private final Integer daysBack;
+  private final ArticleC
 
   public ArticleFacade(ArticleRepository articleRepository,
                        @Value("${article.daysback}")Integer daysBack,
@@ -54,6 +57,22 @@ public class ArticleFacade {
 
   public Article save(Article article) {
     return articleRepository.save(article);
+  }
+
+  public Article createAndSave(String url, edu.uci.ics.crawler4j.crawler.Page page, HtmlParseData parseData) {
+    Optional<Article> articleFromDB = findByUrl(url).stream().findFirst();
+    Article article = createFromPage(page, parseData, articleFromDB);
+  }
+
+  public boolean shouldCheckForNewComments(String url) {
+    List<Article> articles = findByUrl(url);
+    if (articles.isEmpty()) {
+      return true;
+    }
+
+    return findArticlesNDaysOld()
+        .stream()
+        .anyMatch(article -> article.getUrl().equalsIgnoreCase(url));
   }
 
   public List<Article> findArticlesNDaysOld() {
