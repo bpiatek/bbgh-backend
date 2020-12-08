@@ -9,7 +9,6 @@ import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -22,33 +21,18 @@ import java.util.Optional;
 @Log4j2
 @Service
 @AllArgsConstructor
-class ArticleCreator {
+public class ArticleCreator {
 
   private final NinetyMinutesArticleExtractor articleExtractor;
   private final NinetyMinutesCommentsExtractor commentsExtractor;
   private final Clock clock;
 
-  Article createFromPage(Page page, HtmlParseData htmlParseData, Optional<Article> article) {
+  public Article createFromPage(Page page, HtmlParseData htmlParseData, Optional<Article> article) {
     String html = htmlParseData.getHtml();
-
-//    if(article.isPresent()) {
-//      int count = article.get().getComments().size();
-//      boolean a = true;
-//    }
 
     return article
         .map(art -> updateExistingArticle(art, html))
         .orElseGet(() -> createNewArticle(page, htmlParseData, html));
-  }
-
-  private Article updateExistingArticle(Article article, String html) {
-    log.info("Searching for new comments for ARTICLE with ID: {} extracted at: {}",
-             article.getId(),
-             article.getCreationDate());
-
-    List<Comment> comments = commentsExtractor.getComments(html);
-
-    return addNewCommentsToArticle(comments, article);
   }
 
   private Article createNewArticle(Page page, HtmlParseData htmlParseData, String html) {
@@ -68,6 +52,16 @@ class ArticleCreator {
     article.setComments(comments);
 
     return article;
+  }
+
+  private Article updateExistingArticle(Article article, String html) {
+    log.info("Searching for new comments for ARTICLE with ID: {} extracted at: {}",
+             article.getId(),
+             article.getCreationDate());
+
+    List<Comment> comments = commentsExtractor.getComments(html);
+
+    return addNewCommentsToArticle(comments, article);
   }
 
   private Article addNewCommentsToArticle(List<Comment> commentsFromArticle, Article article) {
