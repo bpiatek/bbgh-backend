@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MentionSentimentRequest {
   MentionSentiment mentionSentiment;
+  boolean human;
 }
