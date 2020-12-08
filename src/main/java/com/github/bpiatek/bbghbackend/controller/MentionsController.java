@@ -79,7 +79,7 @@ class MentionsController {
   })
   @PostMapping("{mentionId}/sentiment")
   ResponseEntity<Void> setMentionSentiment(@PathVariable Long mentionId, @RequestBody MentionSentimentRequest request) {
-    mentionFacade.setSentiment(mentionId, request.getMentionSentiment());
+    mentionFacade.setSentiment(mentionId, request);
 
     return ResponseEntity.ok().build();
   }

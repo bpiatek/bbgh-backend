@@ -22,4 +22,5 @@ public class MentionResponse {
   MentionSentiment mentionSentiment;
   Integer startsAt;
   Integer endsAt;
+  Boolean sentimentMarkedByHuman;
 }

@@ -69,16 +69,10 @@ public class MentionFacade {
   }
 
   @Transactional
-  public int setSentiment(Long id, MentionSentiment sentiment) {
-    log.info("Setting MENTION (ID: {}) sentiment to: {}", id, sentiment.toString());
-    return mentionRepository.setMentionSentimentById(id, sentiment);
-  }
+  public int setSentiment(Long id, MentionSentimentRequest request) {
+    logSentimentIsSet(id, request);
 
-  public void logMentionSaved(MentionResponse response) {
-    log.info("MENTION with ID: {} saved! Player ID: {}, comment ID: {}",
-             response.getId(),
-             response.getPlayerId(),
-             response.getCommentId());
+    return mentionRepository.setMentionSentimentById(id, request.getMentionSentiment(), request.isHuman());
   }
 
   private Page<MentionResponse> findBySentiments(Pageable pageable, List<MentionSentiment> sentiments) {
@@ -156,6 +150,21 @@ public class MentionFacade {
       return commentFacade.findById(id);
     } catch (CommentNotFoundException ex) {
       throw new MentionCanNotBeCreatedException(ex.getMessage());
+    }
+  }
+
+  public void logMentionSaved(MentionResponse response) {
+    log.info("MENTION with ID: {} saved! Player ID: {}, comment ID: {}",
+             response.getId(),
+             response.getPlayerId(),
+             response.getCommentId());
+  }
+
+  public void logSentimentIsSet(Long id, MentionSentimentRequest request) {
+    if (request.isHuman()) {
+      log.info("Human is setting MENTION (ID: {}) sentiment to: {}", id, request.getMentionSentiment());
+    } else {
+      log.info("Mentioner is setting MENTION (ID: {}) sentiment to: {}", id, request.getMentionSentiment());
     }
   }
 }

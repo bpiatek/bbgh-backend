@@ -27,7 +27,9 @@ interface MentionRepository extends Repository<Mention, Long> {
   Page<Mention> findByPlayerIdIn(Pageable pageable, List<Long> ids);
 
   @Modifying
-  @Query("UPDATE Mention m SET m.sentiment = :sentiment WHERE m.id = :id")
-  int setMentionSentimentById(@Param("id") Long id, @Param("sentiment") MentionSentiment sentiment);
+  @Query("UPDATE Mention m SET m.sentiment = :sentiment, m.sentimentMarkedByHuman = :isHuman WHERE m.id = :id")
+  int setMentionSentimentById(@Param("id") Long id,
+                              @Param("sentiment") MentionSentiment sentiment,
+                              @Param("isHuman") boolean isHuman);
 
 }

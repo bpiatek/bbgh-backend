@@ -32,6 +32,8 @@ public class Mention {
   @Enumerated(STRING)
   private MentionSentiment sentiment;
 
+  private Boolean sentimentMarkedByHuman;
+
   /**
    * Index of first character of mention in a comment
    * e.g. comment: "Good game John Smith", mention is for player "John Smith" and  mention.startsAt=10, mention.endsAt=19
@@ -51,18 +53,20 @@ public class Mention {
         .mentionSentiment(this.sentiment)
         .startsAt(this.startsAt)
         .endsAt(this.endsAt)
+        .sentimentMarkedByHuman(this.sentimentMarkedByHuman)
         .build();
   }
 
   @Override
   public String toString() {
     return "Mention{" +
-        "id=" + id +
-        ", comment=" + comment +
-        ", player=" + player +
-        ", sentiment=" + sentiment +
-        ", startsAt=" + startsAt +
-        ", endsAt=" + endsAt +
-        '}';
+           "id=" + id +
+           ", comment=" + comment +
+           ", player=" + player +
+           ", sentiment=" + sentiment +
+           ", sentimentMarkedByHuman=" + sentimentMarkedByHuman +
+           ", startsAt=" + startsAt +
+           ", endsAt=" + endsAt +
+           '}';
   }
 }
