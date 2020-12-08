@@ -11,8 +11,6 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -36,7 +34,7 @@ class NinetyMinutesCrawler extends WebCrawler {
   public boolean shouldVisit(Page referringPage, WebURL url) {
     String href = url.getURL().toLowerCase();
     return !FILTERS.matcher(href).matches() && (isNewsDetailsUrl(href) || isNewsListUrl(href))
-                      && shouldCheckForNewComments(href);
+                      && articleFacade.shouldCheckForNewComments(href);
   }
 
   @Override
@@ -49,10 +47,7 @@ class NinetyMinutesCrawler extends WebCrawler {
     if (isNewsDetailsUrl(url)) {
       HtmlParseData parseData = (HtmlParseData) page.getParseData();
 
-      Optional<Article> articleFromDB = articleFacade.findByUrl(url).stream().findFirst();
-      Article article = articleCreator.createFromPage(page, parseData, articleFromDB);
-
-      Article savedArticle = articleFacade.save(article);
+      Article savedArticle = articleFacade.createAndSave(url, page, parseData);
       log.info("Article with ID: {} from portal {} saved", savedArticle.getId(), NINETY_MINUTES_URL);
     }
 
@@ -65,16 +60,5 @@ class NinetyMinutesCrawler extends WebCrawler {
 
   private boolean isNewsListUrl(String url) {
     return url.startsWith(NEWS_LIST_URL_TEMPLATE);
-  }
-
-  private boolean shouldCheckForNewComments(String url) {
-    List<Article> articles = articleFacade.findByUrl(url);
-    if (articles.isEmpty()) {
-      return true;
-    }
-
-    return articleFacade.findArticlesNDaysOld()
-        .stream()
-        .anyMatch(article -> article.getUrl().equalsIgnoreCase(url));
   }
 }

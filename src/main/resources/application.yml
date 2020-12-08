@@ -7,6 +7,7 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: none
+    open-in-view: false
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}

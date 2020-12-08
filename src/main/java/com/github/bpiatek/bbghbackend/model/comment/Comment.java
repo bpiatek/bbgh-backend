@@ -28,6 +28,7 @@ public class Comment {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JsonBackReference
+  @EqualsAndHashCode.Exclude
   private Article article;
 
   public Comment(String author, String content, LocalDateTime dateAdded) {

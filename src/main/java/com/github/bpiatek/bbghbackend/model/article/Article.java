@@ -33,6 +33,7 @@ public class Article {
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   @JsonIgnore
+  @ToString.Exclude
   private List<Comment> comments = new ArrayList<>();
 
   public void setComments(List<Comment> comments) {
@@ -42,5 +43,9 @@ public class Article {
         .forEach(comment -> comment.setArticle(this));
 
     this.comments = comments;
+  }
+
+  public void addComment(Comment comment) {
+    this.comments.add(comment);
   }
 }
