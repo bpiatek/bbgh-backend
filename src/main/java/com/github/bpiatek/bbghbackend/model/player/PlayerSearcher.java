@@ -4,6 +4,8 @@ import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +20,23 @@ import java.util.Optional;
  */
 @Log4j2
 @Service
-@RequiredArgsConstructor
 class PlayerSearcher {
 
   private final PlayerRepository playerRepository;
+  private List<String> distinctFirstNames;
+  private List<String> distinctLastNames;
+
+  public PlayerSearcher(PlayerRepository playerRepository) {
+    this.playerRepository = playerRepository;
+  }
+
+  @EventListener
+  public void afterApplicationStartup(ContextRefreshedEvent event) {
+    log.info("Loading names and surnames into cache...");
+    distinctLastNames = playerRepository.findDistinctLastNames();
+    distinctFirstNames = playerRepository.findDistinctFirstNames();
+    log.info("Names and surnames successfully loaded into cache");
+  }
 
   public Page<Player> search(String text, Pageable pageable) {
     Optional<String> firstName = getFirstName(text);
@@ -31,16 +46,12 @@ class PlayerSearcher {
   }
 
   private Optional<String> getFirstName(String text) {
-    List<String> distinctFirstNames = playerRepository.findDistinctFirstNames();
-
     return distinctFirstNames.stream()
         .filter(firstName -> containsIgnoreCase(text, firstName))
         .findFirst();
   }
 
   private Optional<String> getLastName(String text) {
-    List<String> distinctLastNames = playerRepository.findDistinctLastNames();
-
     return distinctLastNames.stream()
         .filter(lastName -> containsIgnoreCase(text, lastName))
         .findFirst();
