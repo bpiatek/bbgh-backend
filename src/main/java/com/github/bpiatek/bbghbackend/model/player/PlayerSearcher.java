@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,13 +48,13 @@ class PlayerSearcher {
 
   private Optional<String> getFirstName(String text) {
     return distinctFirstNames.stream()
-        .filter(firstName -> containsIgnoreCase(text, firstName))
+        .filter(firstName -> equalsIgnoreCase(text, firstName))
         .findFirst();
   }
 
   private Optional<String> getLastName(String text) {
     return distinctLastNames.stream()
-        .filter(lastName -> containsIgnoreCase(text, lastName))
+        .filter(lastName -> equalsIgnoreCase(text, lastName))
         .findFirst();
   }
 
