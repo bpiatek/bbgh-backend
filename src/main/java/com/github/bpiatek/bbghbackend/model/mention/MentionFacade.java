@@ -122,19 +122,13 @@ public class MentionFacade {
              request.getPlayerId(),
              request.getCommentId());
 
-    try {
-      return of(Mention.builder()
+    return of(Mention.builder()
                     .comment(getComment(request.getCommentId()))
                     .player(getPlayer(request.getPlayerId()))
                     .sentiment(request.getSentiment() != null ? request.getSentiment() : NOT_CHECKED)
                     .startsAt(request.getStartsAt())
                     .endsAt(request.getEndsAt())
                     .build());
-    } catch (MentionCanNotBeCreatedException ex) {
-      log.error(ex.getMessage());
-    }
-
-    return Optional.empty();
   }
 
   private Player getPlayer(Long id) {

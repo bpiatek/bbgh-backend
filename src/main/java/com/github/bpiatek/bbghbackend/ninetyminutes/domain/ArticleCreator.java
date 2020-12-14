@@ -44,6 +44,7 @@ public class ArticleCreator {
         .title(htmlParseData.getTitle())
         .content(articleExtractor.getArticleContentAsText(html))
         .creationDate(articleCreationDate)
+        .updatedAt(LocalDateTime.now(clock))
         .build();
 
     List<Comment> comments = commentsExtractor.getComments(html);
