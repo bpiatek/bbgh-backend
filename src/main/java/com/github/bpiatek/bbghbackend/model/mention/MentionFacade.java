@@ -1,16 +1,8 @@
 package com.github.bpiatek.bbghbackend.model.mention;
 
-import static com.github.bpiatek.bbghbackend.model.mention.MentionSentiment.NOT_CHECKED;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
-import com.github.bpiatek.bbghbackend.model.comment.Comment;
-import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
-import com.github.bpiatek.bbghbackend.model.comment.api.CommentNotFoundException;
 import com.github.bpiatek.bbghbackend.model.mention.api.*;
-import com.github.bpiatek.bbghbackend.model.player.Player;
-import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
-import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -31,11 +23,10 @@ import java.util.Optional;
 public class MentionFacade {
 
   private final MentionRepository mentionRepository;
-  private final CommentFacade commentFacade;
-  private final PlayerFacade playerFacade;
+  private final MentionCreator mentionCreator;
 
   public Optional<MentionResponse> createAndSaveMention(CreateMentionRequest request) {
-    return constructMention(request)
+    return mentionCreator.from(request)
         .map(mentionRepository::save)
         .map(Mention::toMentionResponse);
   }
@@ -115,42 +106,6 @@ public class MentionFacade {
         .get()
         .map(Mention::toMentionResponse)
         .collect(toList());
-  }
-
-  private Optional<Mention> constructMention(CreateMentionRequest request) {
-    log.info("Creating MENTION for player with ID: {} in comment with ID: {}",
-             request.getPlayerId(),
-             request.getCommentId());
-
-    try {
-      return of(Mention.builder()
-                    .comment(getComment(request.getCommentId()))
-                    .player(getPlayer(request.getPlayerId()))
-                    .sentiment(request.getSentiment() != null ? request.getSentiment() : NOT_CHECKED)
-                    .startsAt(request.getStartsAt())
-                    .endsAt(request.getEndsAt())
-                    .build());
-    } catch (MentionCanNotBeCreatedException ex) {
-      log.error(ex.getMessage());
-    }
-
-    return Optional.empty();
-  }
-
-  private Player getPlayer(Long id) {
-    try {
-      return playerFacade.findById(id);
-    } catch (PlayerNotFoundException ex) {
-      throw new MentionCanNotBeCreatedException(ex.getMessage());
-    }
-  }
-
-  private Comment getComment(Long id) {
-    try {
-      return commentFacade.findById(id);
-    } catch (CommentNotFoundException ex) {
-      throw new MentionCanNotBeCreatedException(ex.getMessage());
-    }
   }
 
   public void logMentionSaved(MentionResponse response) {
