@@ -21,15 +21,15 @@ interface PlayerRepository extends Repository<Player, Long> {
 
   Page<Player> findAll(Pageable pageable);
 
-  @Query(value = "SELECT DISTINCT last_name FROM Player", nativeQuery = true)
+  @Query(value = "SELECT DISTINCT last_name FROM player", nativeQuery = true)
   List<String> findDistinctLastNames();
 
-  @Query(value = "SELECT DISTINCT first_name FROM Player", nativeQuery = true)
+  @Query(value = "SELECT DISTINCT first_name FROM player", nativeQuery = true)
   List<String> findDistinctFirstNames();
 
-  Page<Player> findAllByFirstName(String firstName, Pageable pageable);
+  Page<Player> findAllByFirstNameIgnoreCase(String firstName, Pageable pageable);
 
-  Page<Player> findAllByLastName(String lastName, Pageable pageable);
+  Page<Player> findAllByLastNameIgnoreCase(String lastName, Pageable pageable);
 
-  Page<Player> findAllByFirstNameAndLastName(String firstName, String lastName, Pageable pageable);
+  Page<Player> findAllByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName, Pageable pageable);
 }

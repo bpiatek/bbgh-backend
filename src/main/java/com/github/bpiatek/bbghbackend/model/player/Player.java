@@ -1,6 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@QueryEntity
 public class Player {
 
   @Id

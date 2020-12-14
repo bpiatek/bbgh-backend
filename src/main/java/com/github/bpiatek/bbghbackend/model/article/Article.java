@@ -2,6 +2,7 @@ package com.github.bpiatek.bbghbackend.model.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@QueryEntity
 public class Article {
 
   @Id

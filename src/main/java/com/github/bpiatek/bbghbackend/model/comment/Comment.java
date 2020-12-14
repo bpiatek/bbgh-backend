@@ -3,6 +3,7 @@ package com.github.bpiatek.bbghbackend.model.comment;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.github.bpiatek.bbghbackend.model.article.Article;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@QueryEntity
 public class Comment {
 
   @Id

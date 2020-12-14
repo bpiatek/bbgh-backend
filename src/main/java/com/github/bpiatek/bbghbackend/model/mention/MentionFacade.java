@@ -3,6 +3,9 @@ package com.github.bpiatek.bbghbackend.model.mention;
 import static java.util.stream.Collectors.toList;
 
 import com.github.bpiatek.bbghbackend.model.mention.api.*;
+import com.github.bpiatek.bbghbackend.model.player.Player;
+import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -24,6 +27,7 @@ public class MentionFacade {
 
   private final MentionRepository mentionRepository;
   private final MentionCreator mentionCreator;
+  private final PlayerFacade playerFacade;
 
   public Optional<MentionResponse> createAndSaveMention(CreateMentionRequest request) {
     return mentionCreator.from(request)
@@ -43,15 +47,11 @@ public class MentionFacade {
     return mentionRepository.findById(id).orElseThrow(() -> new MentionNotFoundException(id));
   }
 
-  public Page<MentionResponse> search(Pageable pageable, List<MentionSentiment> sentiments, List<Long> ids) {
-    log.debug("Searching for MENTIONS...");
-    if (sentiments != null) {
-      return findBySentiments(pageable, sentiments);
-    } else if (ids != null) {
-      return findByPlayersIds(pageable, ids);
-    } else {
-      return findAll(pageable);
-    }
+  public Page<MentionResponse> search(Predicate predicate, Pageable pageable) {
+    Page<Mention> allPageable = mentionRepository.findAll(predicate, pageable);
+    List<MentionResponse> mentions = toMentionResponseList(allPageable);
+
+    return new PageImpl<>(mentions, allPageable.getPageable(), allPageable.getTotalElements());
   }
 
   public Page<Mention> findByCommentId(Long commentId, Pageable pageable) {
@@ -66,39 +66,16 @@ public class MentionFacade {
     return mentionRepository.setMentionSentimentById(id, request.getMentionSentiment(), request.isHuman());
   }
 
-  private Page<MentionResponse> findBySentiments(Pageable pageable, List<MentionSentiment> sentiments) {
-    log.debug("Looking for MENTIONS by sentiment: {}", sentiments.toString());
-    Page<Mention> mentionsWithSentimentsPageable = mentionRepository.findBySentimentIn(pageable, sentiments);
-    List<MentionResponse> mentions = toMentionResponseList(mentionsWithSentimentsPageable);
-
-    return new PageImpl<>(
-        mentions,
-        mentionsWithSentimentsPageable.getPageable(),
-        mentionsWithSentimentsPageable.getTotalElements()
-    );
-  }
-
-  private Page<MentionResponse> findByPlayersIds(Pageable pageable, List<Long> ids) {
-    log.debug("Looking for MENTIONS by players ids: {}", ids.toString());
-    Page<Mention> mentionsWithPlayersIdsPageable = mentionRepository.findByPlayerIdIn(pageable, ids);
-    List<MentionResponse> mentions = toMentionResponseList(mentionsWithPlayersIdsPageable);
-
-    return new PageImpl<>(
-        mentions,
-        mentionsWithPlayersIdsPageable.getPageable(),
-        mentionsWithPlayersIdsPageable.getTotalElements()
-    );
-  }
-
-  private Page<MentionResponse> findAll(Pageable pageable) {
-    Page<Mention> mentionsPageable = mentionRepository.findAll(pageable);
-
-    List<MentionResponse> mentions = mentionsPageable
-        .get()
-        .map(Mention::toMentionResponse)
+  public Page<MentionResponse> findByPlayersName(String search, Pageable pageable) {
+    final List<Player> players = playerFacade.search(search, pageable).stream().collect(toList());
+    final List<Long> ids = players.stream()
+        .map(Player::getId)
         .collect(toList());
 
-    return new PageImpl<>(mentions, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
+    Page<Mention> mentionsPageable = mentionRepository.findByPlayerIdIn(pageable, ids);
+    List<MentionResponse> mentionResponses = toMentionResponseList(mentionsPageable);
+
+    return new PageImpl<>(mentionResponses, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
   }
 
   private List<MentionResponse> toMentionResponseList(Page<Mention> mentions) {

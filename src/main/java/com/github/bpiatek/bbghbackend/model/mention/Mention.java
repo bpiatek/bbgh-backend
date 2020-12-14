@@ -3,6 +3,7 @@ package com.github.bpiatek.bbghbackend.model.mention;
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.Player;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import static javax.persistence.EnumType.STRING;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@QueryEntity
 public class Mention {
 
   @Id

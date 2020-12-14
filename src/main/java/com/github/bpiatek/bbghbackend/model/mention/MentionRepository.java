@@ -4,6 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
@@ -13,7 +16,19 @@ import java.util.Optional;
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
  */
-interface MentionRepository extends Repository<Mention, Long> {
+interface MentionRepository extends Repository<Mention, Long>,
+                                    QuerydslPredicateExecutor<Mention>,
+                                    QuerydslBinderCustomizer<QMention> {
+
+  @Override
+  default void customize(QuerydslBindings bindings, QMention qMention) {
+    bindings.bind(qMention.id)
+        .all(((path, value) -> Optional.of(path.in(value))));
+
+    bindings.bind(qMention.sentiment)
+        .all(((path, value) -> Optional.of(path.in(value))));
+  }
+
   Mention save(Mention player);
 
   Page<Mention> findByCommentId(Long commentId, Pageable pageable);
