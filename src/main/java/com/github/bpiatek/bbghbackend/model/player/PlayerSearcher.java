@@ -1,5 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -32,7 +34,7 @@ class PlayerSearcher {
     List<String> distinctFirstNames = playerRepository.findDistinctFirstNames();
 
     return distinctFirstNames.stream()
-        .filter(text::contains)
+        .filter(firstName -> containsIgnoreCase(text, firstName))
         .findFirst();
   }
 
@@ -40,20 +42,20 @@ class PlayerSearcher {
     List<String> distinctLastNames = playerRepository.findDistinctLastNames();
 
     return distinctLastNames.stream()
-        .filter(text::contains)
+        .filter(lastName -> containsIgnoreCase(text, lastName))
         .findFirst();
   }
 
   private Page<Player> searchForPlayers(Optional<String> firstName, Optional<String> lastName, Pageable pageable) {
     if (firstAndLastNameIsPresent(firstName, lastName)) {
       log.info("Searching for PLAYER with firstName: {} and lastName: {}", firstName, lastName);
-      return playerRepository.findAllByFirstNameAndLastName(firstName.get(), lastName.get(), pageable);
+      return playerRepository.findAllByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName.get(), lastName.get(), pageable);
     } else if (onlyFirstNameIsPresent(firstName, lastName)) {
       log.info("Searching for PLAYER with firstName: {}", lastName);
-      return playerRepository.findAllByFirstName(firstName.get(), pageable);
+      return playerRepository.findAllByFirstNameIgnoreCase(firstName.get(), pageable);
     } else if (onlyLastNameIsPresent(firstName, lastName)) {
       log.info("Searching for PLAYER with lastName: {}", lastName);
-      return playerRepository.findAllByLastName(lastName.get(), pageable);
+      return playerRepository.findAllByLastNameIgnoreCase(lastName.get(), pageable);
     } else {
       return new PageImpl<>(new ArrayList<>());
     }
