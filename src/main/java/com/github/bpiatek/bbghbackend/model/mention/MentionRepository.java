@@ -48,7 +48,7 @@ interface MentionRepository extends Repository<Mention, Long>,
                               @Param("isHuman") boolean isHuman);
 
   @Modifying
-  @Query("UPDATE Mention m SET m.sentiment = :sentiment WHERE m.id in :ids")
+  @Query("UPDATE Mention m SET m.sentiment = :sentiment, m.sentimentMarkedByHuman = FALSE WHERE m.id in :ids")
   int setSentimentForMentionsWithIds(@Param("sentiment") MentionSentiment sentiment,
                                      @Param("ids") List<Long> ids);
 }
