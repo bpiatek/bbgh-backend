@@ -85,6 +85,16 @@ public class MentionFacade {
         .collect(toList());
   }
 
+  @Transactional
+  public void setManySentimentsForManyMentions(MassMentionsSentimentsRequest request) {
+    request.getItems()
+        .forEach(this::setSentimentForItem);
+  }
+
+  private void setSentimentForItem(MassMentionsSentimentsRequest.SpecificSentimentItem item) {
+    mentionRepository.setSentimentForMentionsWithIds(item.getSentiment(), item.getIds());
+  }
+
   public void logMentionSaved(MentionResponse response) {
     log.info("MENTION with ID: {} saved! Player ID: {}, comment ID: {}",
              response.getId(),

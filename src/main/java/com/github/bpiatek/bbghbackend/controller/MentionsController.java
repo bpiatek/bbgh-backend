@@ -8,9 +8,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
-import com.github.bpiatek.bbghbackend.model.mention.api.CreateMentionRequest;
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
+import com.github.bpiatek.bbghbackend.model.mention.api.*;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.*;
@@ -94,6 +92,17 @@ class MentionsController {
   @PostMapping("{mentionId}/sentiment")
   ResponseEntity<Void> setMentionSentiment(@PathVariable Long mentionId, @RequestBody MentionSentimentRequest request) {
     mentionFacade.setSentiment(mentionId, request);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @ApiOperation(value = "Set many sentiments for many mentions")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully set sentiments for mentions"),
+  })
+  @PostMapping("sentiments")
+  ResponseEntity<Void> setManyMentionSentiments(@RequestBody MassMentionsSentimentsRequest request) {
+    mentionFacade.setManySentimentsForManyMentions(request);
 
     return ResponseEntity.ok().build();
   }

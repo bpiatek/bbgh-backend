@@ -26,7 +26,6 @@
         <filter class="com.github.bpiatek.bbghbackend.utils.LoggerFilter">
             <levels>INFO|DEBUG|WARN|ERROR</levels>
         </filter>
-        <file>${LOG_PATH}/bbgh-backend.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</Pattern>
         </encoder>
@@ -35,6 +34,7 @@
             <fileNamePattern>${LOG_PATH}/bbgh-backend.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>2</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
     </appender>
