@@ -39,6 +39,7 @@ interface ArticleRepository extends Repository<Article, Long> {
          + "    on c.id = m.comment.id"
          + "    join Article a"
          + "    on a.id = c.article.id "
-         + "where p.id = :playerId")
+         + "where p.id = :playerId "
+         + "order by a.creationDate desc")
   Page<Article> findAllByPlayerId(@Param("playerId") Long playerId, Pageable pageable);
 }
