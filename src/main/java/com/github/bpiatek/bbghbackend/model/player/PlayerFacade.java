@@ -3,6 +3,7 @@ package com.github.bpiatek.bbghbackend.model.player;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_DOWN;
 
+import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class PlayerFacade {
     return playerRepository.search(text, pageable);
   }
 
-  public SentimentCounter playerPercentage(List<MentionResponse> mentions) {
+  public SentimentCounter playerPercentage(List<Mention> mentions) {
     SentimentCounter sentimentCounter = populateSentimentCounter(mentions);
     if (noMentions(sentimentCounter) || noNegativeMentions(sentimentCounter)) {
       return sentimentCounter;
@@ -73,10 +74,10 @@ public class PlayerFacade {
     return sentimentCounter.getNegative().compareTo(ZERO) == 0;
   }
 
-  private SentimentCounter populateSentimentCounter(List<MentionResponse> mentions) {
+  private SentimentCounter populateSentimentCounter(List<Mention> mentions) {
     SentimentCounter sentimentCounter = new SentimentCounter();
-    for (MentionResponse response : mentions) {
-      switch (response.getMentionSentiment()) {
+    for (Mention response : mentions) {
+      switch (response.getSentiment()) {
         case NEUTRAL:
           sentimentCounter.addNeutral();
           break;
