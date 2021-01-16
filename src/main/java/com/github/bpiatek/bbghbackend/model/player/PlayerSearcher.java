@@ -53,6 +53,8 @@ class PlayerSearcher {
   }
 
   private Optional<String> searchForNameOrSurname(String text, List<String> distinctNamesOrSurnames) {
+    log.info("DISTINCT COUNT: {}", distinctNamesOrSurnames.size());
+
     List<String> strings = of(text.trim().split(" "));
     log.info("STRINGS: {}", strings);
     List<String> names = new ArrayList<>();
