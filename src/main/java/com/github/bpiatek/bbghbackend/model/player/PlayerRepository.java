@@ -25,7 +25,8 @@ interface PlayerRepository extends Repository<Player, Long> {
   @Query("SELECT DISTINCT p.firstName, p.lastName FROM Player p")
   List<String> distinctFullNames();
 
-  @Query("SELECT p FROM Player p WHERE UPPER(CONCAT(p.firstName, ' ', p.lastName)) LIKE UPPER(CONCAT('%', :name, '%'))")
+  @Query("SELECT p FROM Player p WHERE UPPER(CONCAT(p.firstName, ' ', p.lastName)) LIKE UPPER(CONCAT('%', :name, '%'))"
+         + " OR UPPER(CONCAT(p.lastName, ' ', p.firstName)) LIKE UPPER(CONCAT('%', :name, '%'))")
   Page<Player> search(@Param("name") String name, Pageable pageable);
 
   Page<Player> findAllByFirstNameIgnoreCase(String firstName, Pageable pageable);
