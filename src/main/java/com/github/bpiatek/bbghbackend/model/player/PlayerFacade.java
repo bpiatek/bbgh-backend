@@ -1,10 +1,11 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.HALF_DOWN;
 
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
+
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -75,25 +76,29 @@ public class PlayerFacade {
   }
 
   private SentimentCounter populateSentimentCounter(List<Mention> mentions) {
-    SentimentCounter sentimentCounter = new SentimentCounter();
+    int positive = 0;
+    int negative = 0;
+    int neutral = 0;
+    int notChecked = 0;
+
     for (Mention response : mentions) {
       switch (response.getSentiment()) {
         case NEUTRAL:
-          sentimentCounter.addNeutral();
+          neutral++;
           break;
         case NEGATIVE:
-          sentimentCounter.addNegative();
+          negative++;
           break;
         case POSITIVE:
-          sentimentCounter.addPositive();
+          positive++;
           break;
         case NOT_CHECKED:
-          sentimentCounter.addNotChecked();
+          notChecked++;
           break;
         default:
       }
     }
 
-    return sentimentCounter;
+    return new SentimentCounter(valueOf(positive), valueOf(negative), valueOf(neutral), valueOf(notChecked), ZERO);
   }
 }

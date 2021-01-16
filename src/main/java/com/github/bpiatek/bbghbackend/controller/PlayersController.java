@@ -70,8 +70,8 @@ class PlayersController {
   @ApiPageable
   @GetMapping("{playerId}/ratio")
   SentimentCounter playerPercentage(@PathVariable Long playerId) {
+    log.info("Calculating mentions ratio for Player: {}", playerId);
     final List<Mention> mentions = mentionFacade.findAllByByPlayerId(playerId);
-
     return playerFacade.playerPercentage(mentions);
   }
 }
