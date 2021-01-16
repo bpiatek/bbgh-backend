@@ -4,8 +4,12 @@ import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Created by Bartosz Piatek on 12/10/2020
@@ -37,6 +41,39 @@ public class PlayerFacade {
   }
 
   public Page<Player> search(String text, Pageable pageable) {
-    return playerSearcher.search(text, pageable);
+    final PlayerSearchResult search = playerSearcher.search(text);
+    return searchForPlayers(search.getFirstName(), search.getLastName(), pageable);
+  }
+
+
+  private Page<Player> searchForPlayers(Optional<String> firstName, Optional<String> lastName, Pageable pageable) {
+    if (firstAndLastNameIsPresent(firstName, lastName)) {
+      log.info("Searching for PLAYER with firstName: {} and lastName: {}", firstName, lastName);
+      return playerRepository.findAllByFirstNameIgnoreCaseAndLastNameIgnoreCase(
+          firstName.get(),
+          lastName.get(),
+          pageable
+      );
+    } else if (onlyFirstNameIsPresent(firstName, lastName)) {
+      log.info("Searching for PLAYER with firstName: {}", lastName);
+      return playerRepository.findAllByFirstNameIgnoreCase(firstName.get(), pageable);
+    } else if (onlyLastNameIsPresent(firstName, lastName)) {
+      log.info("Searching for PLAYER with lastName: {}", lastName);
+      return playerRepository.findAllByLastNameIgnoreCase(lastName.get(), pageable);
+    } else {
+      return new PageImpl<>(new ArrayList<>());
+    }
+  }
+
+  private boolean onlyFirstNameIsPresent(Optional<String> firstName, Optional<String> lastName) {
+    return lastName.isEmpty() && firstName.isPresent();
+  }
+
+  private boolean onlyLastNameIsPresent(Optional<String> firstName, Optional<String> lastName) {
+    return firstName.isEmpty() && lastName.isPresent();
+  }
+
+  private boolean firstAndLastNameIsPresent(Optional<String> firstName, Optional<String> lastName) {
+    return firstName.isPresent() && lastName.isPresent();
   }
 }
