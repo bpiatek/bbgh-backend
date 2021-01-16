@@ -1,9 +1,7 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static java.util.List.of;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -47,21 +45,40 @@ class PlayerSearcher {
   }
 
   private Optional<String> getFirstName(String text) {
-    return distinctFirstNames.stream()
-        .filter(firstName -> equalsIgnoreCase(text, firstName))
-        .findFirst();
+    return searchForNameOrSurname(text, distinctFirstNames);
   }
 
   private Optional<String> getLastName(String text) {
-    return distinctLastNames.stream()
-        .filter(lastName -> equalsIgnoreCase(text, lastName))
-        .findFirst();
+    return searchForNameOrSurname(text, distinctLastNames);
+  }
+
+  private Optional<String> searchForNameOrSurname(String text, List<String> distinctNamesOrSurnames) {
+    List<String> strings = of(text.trim().split(" "));
+    List<String> names = new ArrayList<>();
+
+    for (String name : strings) {
+      for (String s : distinctNamesOrSurnames) {
+        if (s.equalsIgnoreCase(name)) {
+          names.add(name);
+        }
+      }
+    }
+
+    if(names.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(names.get(0));
   }
 
   private Page<Player> searchForPlayers(Optional<String> firstName, Optional<String> lastName, Pageable pageable) {
     if (firstAndLastNameIsPresent(firstName, lastName)) {
       log.info("Searching for PLAYER with firstName: {} and lastName: {}", firstName, lastName);
-      return playerRepository.findAllByFirstNameIgnoreCaseAndLastNameIgnoreCase(firstName.get(), lastName.get(), pageable);
+      return playerRepository.findAllByFirstNameIgnoreCaseAndLastNameIgnoreCase(
+          firstName.get(),
+          lastName.get(),
+          pageable
+      );
     } else if (onlyFirstNameIsPresent(firstName, lastName)) {
       log.info("Searching for PLAYER with firstName: {}", lastName);
       return playerRepository.findAllByFirstNameIgnoreCase(firstName.get(), pageable);
