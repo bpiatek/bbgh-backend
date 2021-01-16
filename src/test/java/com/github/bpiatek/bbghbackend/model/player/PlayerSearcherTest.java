@@ -10,8 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 /**
  * Created by Bartosz Piatek on 16/01/2021
  */
@@ -52,6 +50,32 @@ class PlayerSearcherTest {
 
     // when
     PlayerSearchResult actualPlayer = playerSearcher.search(lastName);
+
+    // then
+    assertThat(actualPlayer.getLastName()).isEmpty();
+    assertThat(actualPlayer.getFirstName()).isEmpty();
+  }
+
+  @Test
+  void shouldFindFirstName() {
+    // given
+    String expectedFirstName = "Jan";
+
+    // when
+    PlayerSearchResult actualPlayer = playerSearcher.search(expectedFirstName);
+
+    // then
+    assertThat(actualPlayer.getFirstName()).contains(expectedFirstName);
+    assertThat(actualPlayer.getLastName()).isEmpty();
+  }
+
+  @Test
+  void shouldNotFindFirstName() {
+    // given
+    String firstName = "NieMa";
+
+    // when
+    PlayerSearchResult actualPlayer = playerSearcher.search(firstName);
 
     // then
     assertThat(actualPlayer.getLastName()).isEmpty();

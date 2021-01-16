@@ -28,28 +28,21 @@ class PlayerSearcher {
   }
 
   private Optional<String> getFirstName(String text) {
-    log.info("SEARCHING IN FIRST NAMES...");
     return searchForNameOrSurname(text, dataProvider.getDistinctFirstNames());
   }
 
   private Optional<String> getLastName(String text) {
-    log.info("SEARCHING IN LAST NAMES...");
     return searchForNameOrSurname(text, dataProvider.getDistinctLastNames());
   }
 
   private Optional<String> searchForNameOrSurname(String text, List<String> distinctNamesOrSurnames) {
-    log.info("DISTINCT COUNT: {}", distinctNamesOrSurnames.size());
-
     List<String> strings = of(text.trim().split(" "));
-    log.info("STRINGS: {}", strings);
     List<String> names = new ArrayList<>();
 
     for (String name : strings) {
-      log.info("NAME: {}", name);
       for (String s : distinctNamesOrSurnames) {
-        log.info("S: {}", s);
-        if (s.equalsIgnoreCase(name)) {
-          names.add(name);
+        if(s != null && s.equalsIgnoreCase(name)) {
+            names.add(name);
         }
       }
     }
