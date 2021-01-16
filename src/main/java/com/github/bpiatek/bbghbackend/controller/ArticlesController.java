@@ -72,4 +72,14 @@ class ArticlesController {
   Page<CommentResponse> getAllCommentsForArticlePageable(@PathVariable Long articleId, @ApiIgnore Pageable pageable) {
     return commentFacade.findByArticleId(articleId, pageable);
   }
+
+  @ApiOperation(value = "Get all articles for given player")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved articles for a given player"),
+  })
+  @ApiPageable
+  @GetMapping("player/{playerId}")
+  Page<Article> findAllByPlayerId(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
+    return articleFacade.findByPlayerId(playerId, pageable);
+  }
 }

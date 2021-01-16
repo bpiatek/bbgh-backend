@@ -29,4 +29,16 @@ interface ArticleRepository extends Repository<Article, Long> {
 
   @Query("SELECT a FROM Article a WHERE a.creationDate >= :daysAgo")
   List<Article> findAllWithDateAfter(@Param("daysAgo") LocalDateTime daysAgo);
+
+  @Query(value = "SELECT "
+         + "distinct a "
+         + "FROM Player p "
+         + "join Mention m"
+         + "    on p.id = m.player.id"
+         + "    join Comment c"
+         + "    on c.id = m.comment.id"
+         + "    join Article a"
+         + "    on a.id = c.article.id "
+         + "where p.id = :playerId")
+  Page<Article> findAllByPlayerId(@Param("playerId") Long playerId, Pageable pageable);
 }
