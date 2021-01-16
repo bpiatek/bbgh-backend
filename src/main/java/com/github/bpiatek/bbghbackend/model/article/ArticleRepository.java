@@ -31,15 +31,14 @@ interface ArticleRepository extends Repository<Article, Long> {
   List<Article> findAllWithDateAfter(@Param("daysAgo") LocalDateTime daysAgo);
 
   @Query(value = "SELECT "
-         + "distinct a "
-         + "FROM Player p "
-         + "join Mention m"
-         + "    on p.id = m.player.id"
-         + "    join Comment c"
-         + "    on c.id = m.comment.id"
-         + "    join Article a"
-         + "    on a.id = c.article.id "
-         + "where p.id = :playerId "
-         + "order by a.creationDate desc")
+                 + "distinct a "
+                 + "FROM Article a "
+                 + "join Comment c"
+                 + "    on a.id = c.article.id"
+                 + "    join Mention m"
+                 + "    on m.comment.id = c.id"
+                 + "    join Player p"
+                 + "    on p.id = m.player.id "
+                 + "where p.id = :playerId ")
   Page<Article> findAllByPlayerId(@Param("playerId") Long playerId, Pageable pageable);
 }
