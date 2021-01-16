@@ -77,9 +77,7 @@ class ArticlesController {
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved articles for a given player"),
   })
-  @ApiImplicitParams({
-      @ApiImplicitParam(name = "page", dataType = "int", paramType = "query", defaultValue = "0", value = "Results page you want to retrieve (0..N)"),
-      @ApiImplicitParam(name = "size", dataType = "int", paramType = "query", defaultValue = "20", value = "Number of records per page.")})
+  @ApiPageable
   @GetMapping("player/{playerId}")
   Page<Article> findAllByPlayerId(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
     return articleFacade.findByPlayerId(playerId, pageable);
