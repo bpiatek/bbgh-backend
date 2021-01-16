@@ -7,6 +7,7 @@ import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.Player;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
+import com.github.bpiatek.bbghbackend.model.player.SentimentCounter;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -70,7 +70,7 @@ class PlayersController {
   })
   @ApiPageable
   @GetMapping("{playerId}/ratio")
-  BigDecimal playerPercentage(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
+  SentimentCounter playerPercentage(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
     List<MentionResponse> mentions = mentionFacade.findByPlayerId(playerId, pageable)
         .get()
         .collect(toList());
