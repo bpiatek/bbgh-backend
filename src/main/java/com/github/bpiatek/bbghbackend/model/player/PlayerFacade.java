@@ -90,7 +90,7 @@ public class PlayerFacade {
           negative++;
           break;
         case POSITIVE:
-          positive;
+          positive++;
           break;
         case NOT_CHECKED:
           notChecked++;
