@@ -68,7 +68,7 @@ class MentionsController {
   Page<MentionResponse> findByPlayerId(@ApiIgnore Pageable pageable,
                                        @PathVariable Long id) {
 
-    return mentionFacade.findByPlayerId(id, pageable);
+    return mentionFacade.findByPlayerIdPageable(id, pageable);
   }
 
   @ApiOperation(value = "Create mention.")
