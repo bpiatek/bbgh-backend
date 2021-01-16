@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,16 +21,7 @@ interface PlayerRepository extends Repository<Player, Long> {
 
   Page<Player> findAll(Pageable pageable);
 
-  @Query("SELECT DISTINCT p.firstName, p.lastName FROM Player p")
-  List<String> distinctFullNames();
-
   @Query("SELECT p FROM Player p WHERE UPPER(CONCAT(p.firstName, ' ', p.lastName)) LIKE UPPER(CONCAT('%', :name, '%'))"
          + " OR UPPER(CONCAT(p.lastName, ' ', p.firstName)) LIKE UPPER(CONCAT('%', :name, '%'))")
   Page<Player> search(@Param("name") String name, Pageable pageable);
-
-  Page<Player> findAllByFirstNameIgnoreCase(String firstName, Pageable pageable);
-
-  Page<Player> findAllByLastNameIgnoreCase(String lastName, Pageable pageable);
-
-  Page<Player> findAllByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName, String lastName, Pageable pageable);
 }

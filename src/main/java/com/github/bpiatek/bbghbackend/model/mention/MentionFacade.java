@@ -1,8 +1,12 @@
 package com.github.bpiatek.bbghbackend.model.mention;
 
+import static com.github.bpiatek.bbghbackend.model.mention.MentionSentiment.*;
+import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.valueOf;
 import static java.util.stream.Collectors.toList;
 
 import com.github.bpiatek.bbghbackend.model.mention.api.*;
+import com.github.bpiatek.bbghbackend.model.mention.api.SentimentCounter;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -75,6 +79,14 @@ public class MentionFacade {
     return mentionRepository.findByPlayerId(id);
   }
 
+  public SentimentCounter populateSentimentCounter(Long playerId) {
+    long positive = mentionRepository.selectCountWherePlayerIdAndSentiment(playerId, POSITIVE);
+    long negative = mentionRepository.selectCountWherePlayerIdAndSentiment(playerId, NEGATIVE);
+    long neutral = mentionRepository.selectCountWherePlayerIdAndSentiment(playerId, NEUTRAL);
+    long notChecked = mentionRepository.selectCountWherePlayerIdAndSentiment(playerId, NOT_CHECKED);
+
+    return new SentimentCounter(valueOf(positive), valueOf(negative), valueOf(neutral), valueOf(notChecked), ZERO);
+  }
   @Transactional
   public void setManySentimentsForManyMentions(MassMentionsSentimentsRequest request) {
     request.getItems()

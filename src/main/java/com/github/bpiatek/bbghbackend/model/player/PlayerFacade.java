@@ -1,12 +1,10 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
 import static java.math.BigDecimal.ZERO;
-import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.HALF_DOWN;
 
-import com.github.bpiatek.bbghbackend.model.mention.Mention;
-
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
+import com.github.bpiatek.bbghbackend.model.mention.api.SentimentCounter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -14,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * Created by Bartosz Piatek on 12/10/2020
@@ -49,8 +46,7 @@ public class PlayerFacade {
     return playerRepository.search(text, pageable);
   }
 
-  public SentimentCounter playerPercentage(List<Mention> mentions) {
-    SentimentCounter sentimentCounter = populateSentimentCounter(mentions);
+  public SentimentCounter playerRatioPercentage(SentimentCounter sentimentCounter) {
     if (noMentions(sentimentCounter) || noNegativeMentions(sentimentCounter)) {
       return sentimentCounter;
     }
@@ -73,32 +69,5 @@ public class PlayerFacade {
 
   private boolean noNegativeMentions(SentimentCounter sentimentCounter) {
     return sentimentCounter.getNegative().compareTo(ZERO) == 0;
-  }
-
-  private SentimentCounter populateSentimentCounter(List<Mention> mentions) {
-    int positive = 0;
-    int negative = 0;
-    int neutral = 0;
-    int notChecked = 0;
-
-    for (Mention response : mentions) {
-      switch (response.getSentiment()) {
-        case NEUTRAL:
-          neutral++;
-          break;
-        case NEGATIVE:
-          negative++;
-          break;
-        case POSITIVE:
-          positive++;
-          break;
-        case NOT_CHECKED:
-          notChecked++;
-          break;
-        default:
-      }
-    }
-
-    return new SentimentCounter(valueOf(positive), valueOf(negative), valueOf(neutral), valueOf(notChecked), ZERO);
   }
 }
