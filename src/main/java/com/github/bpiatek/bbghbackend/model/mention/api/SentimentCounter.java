@@ -1,4 +1,4 @@
-package com.github.bpiatek.bbghbackend.model.player;
+package com.github.bpiatek.bbghbackend.model.mention.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

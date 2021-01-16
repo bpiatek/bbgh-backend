@@ -43,6 +43,9 @@ interface MentionRepository extends Repository<Mention, Long>,
 
   List<Mention> findByPlayerId(Long id);
 
+  @Query("SELECT COUNT(m) FROM Mention m WHERE m.player.id = :playerId AND m.sentiment = :sentiment")
+  long selectCountWherePlayerIdAndSentiment(@Param("playerId") Long playerId, @Param("sentiment") MentionSentiment sentiment);
+
   @Modifying
   @Query("UPDATE Mention m SET m.sentiment = :sentiment, m.sentimentMarkedByHuman = :isHuman WHERE m.id = :id")
   int setMentionSentimentById(@Param("id") Long id,
