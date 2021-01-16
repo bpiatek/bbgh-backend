@@ -70,10 +70,16 @@ class PlayersController {
   })
   @ApiPageable
   @GetMapping("{playerId}/ratio")
+<<<<<<< Updated upstream
   SentimentCounter playerPercentage(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
     List<MentionResponse> mentions = mentionFacade.findByPlayerId(playerId, pageable)
         .get()
         .collect(toList());
+=======
+  SentimentCounter playerPercentage(@PathVariable Long playerId) {
+    log.info("Calculating mentions ratio for Player: {}", playerId);
+    List<Mention> mentions = mentionFacade.findAllByByPlayerId(playerId);
+>>>>>>> Stashed changes
 
     return playerFacade.playerPercentage(mentions);
   }
