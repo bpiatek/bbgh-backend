@@ -3,8 +3,6 @@ package com.github.bpiatek.bbghbackend.model.mention;
 import static java.util.stream.Collectors.toList;
 
 import com.github.bpiatek.bbghbackend.model.mention.api.*;
-import com.github.bpiatek.bbghbackend.model.player.Player;
-import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +25,6 @@ public class MentionFacade {
 
   private final MentionRepository mentionRepository;
   private final MentionCreator mentionCreator;
-  private final PlayerFacade playerFacade;
 
   public Optional<MentionResponse> createAndSaveMention(CreateMentionRequest request) {
     return mentionCreator.from(request)
@@ -72,18 +69,6 @@ public class MentionFacade {
     return new PageImpl<>(toMentionResponseList(mentionsByPlayerIdPageable),
                           mentionsByPlayerIdPageable.getPageable(),
                           mentionsByPlayerIdPageable.getTotalElements());
-  }
-
-  public Page<MentionResponse> findByPlayersName(String search, Pageable pageable) {
-    final List<Player> players = playerFacade.search(search, pageable).stream().collect(toList());
-    final List<Long> ids = players.stream()
-        .map(Player::getId)
-        .collect(toList());
-
-    Page<Mention> mentionsPageable = mentionRepository.findByPlayerIdIn(pageable, ids);
-    List<MentionResponse> mentionResponses = toMentionResponseList(mentionsPageable);
-
-    return new PageImpl<>(mentionResponses, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
   }
 
   @Transactional
