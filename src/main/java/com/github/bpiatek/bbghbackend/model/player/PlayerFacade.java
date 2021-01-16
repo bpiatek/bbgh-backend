@@ -45,7 +45,7 @@ public class PlayerFacade {
   }
 
   public Page<Player> search(String text, Pageable pageable) {
-    log.debug("Searching for player: {}", text);
+    log.info("Searching for player: {}", text);
     return playerRepository.search(text, pageable);
   }
 
