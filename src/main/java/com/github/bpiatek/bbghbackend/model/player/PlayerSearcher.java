@@ -34,7 +34,7 @@ class PlayerSearcher {
     log.info("Loading names and surnames into cache...");
     distinctLastNames = playerRepository.findDistinctLastNames();
     distinctFirstNames = playerRepository.findDistinctFirstNames();
-    log.info("Names and surnames successfully loaded into cache");
+    log.info("Distinct names: {} and surnames: {} successfully loaded into cache", distinctFirstNames.size(), distinctLastNames.size());
   }
 
   public Page<Player> search(String text, Pageable pageable) {
