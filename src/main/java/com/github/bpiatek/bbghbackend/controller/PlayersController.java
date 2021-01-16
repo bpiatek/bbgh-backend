@@ -1,10 +1,9 @@
 package com.github.bpiatek.bbghbackend.controller;
 
-import static java.util.stream.Collectors.toList;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
+import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.Player;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.github.bpiatek.bbghbackend.model.player.SentimentCounter;
@@ -70,17 +69,9 @@ class PlayersController {
   })
   @ApiPageable
   @GetMapping("{playerId}/ratio")
-<<<<<<< Updated upstream
-  SentimentCounter playerPercentage(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
-    List<MentionResponse> mentions = mentionFacade.findByPlayerId(playerId, pageable)
-        .get()
-        .collect(toList());
-=======
   SentimentCounter playerPercentage(@PathVariable Long playerId) {
     log.info("Calculating mentions ratio for Player: {}", playerId);
-    List<Mention> mentions = mentionFacade.findAllByByPlayerId(playerId);
->>>>>>> Stashed changes
-
+    final List<Mention> mentions = mentionFacade.findAllByByPlayerId(playerId);
     return playerFacade.playerPercentage(mentions);
   }
 }

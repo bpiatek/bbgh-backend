@@ -63,12 +63,16 @@ public class MentionFacade {
     return mentionRepository.setMentionSentimentById(id, request.getMentionSentiment(), request.isHuman());
   }
 
-  public Page<MentionResponse> findByPlayerId(Long playerId, Pageable pageable) {
+  public Page<MentionResponse> findByPlayerIdPageable(Long playerId, Pageable pageable) {
     Page<Mention> mentionsByPlayerIdPageable = mentionRepository.findByPlayerIdIn(pageable, List.of(playerId));
 
     return new PageImpl<>(toMentionResponseList(mentionsByPlayerIdPageable),
                           mentionsByPlayerIdPageable.getPageable(),
                           mentionsByPlayerIdPageable.getTotalElements());
+  }
+
+  public List<Mention> findAllByByPlayerId(Long id) {
+    return mentionRepository.findByPlayerId(id);
   }
 
   @Transactional

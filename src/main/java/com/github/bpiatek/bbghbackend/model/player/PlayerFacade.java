@@ -4,11 +4,8 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.HALF_DOWN;
 
-<<<<<<< Updated upstream
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
-=======
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
->>>>>>> Stashed changes
+
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -52,7 +49,7 @@ public class PlayerFacade {
     return playerRepository.search(text, pageable);
   }
 
-  public SentimentCounter playerPercentage(List<MentionResponse> mentions) {
+  public SentimentCounter playerPercentage(List<Mention> mentions) {
     SentimentCounter sentimentCounter = populateSentimentCounter(mentions);
     if (noMentions(sentimentCounter) || noNegativeMentions(sentimentCounter)) {
       return sentimentCounter;
@@ -78,12 +75,6 @@ public class PlayerFacade {
     return sentimentCounter.getNegative().compareTo(ZERO) == 0;
   }
 
-<<<<<<< Updated upstream
-  private SentimentCounter populateSentimentCounter(List<MentionResponse> mentions) {
-    SentimentCounter sentimentCounter = new SentimentCounter();
-    for (MentionResponse response : mentions) {
-      switch (response.getMentionSentiment()) {
-=======
   private SentimentCounter populateSentimentCounter(List<Mention> mentions) {
     int positive = 0;
     int negative = 0;
@@ -92,7 +83,6 @@ public class PlayerFacade {
 
     for (Mention response : mentions) {
       switch (response.getSentiment()) {
->>>>>>> Stashed changes
         case NEUTRAL:
           neutral++;
           break;
@@ -100,7 +90,7 @@ public class PlayerFacade {
           negative++;
           break;
         case POSITIVE:
-          positive++;
+          positive;
           break;
         case NOT_CHECKED:
           notChecked++;
