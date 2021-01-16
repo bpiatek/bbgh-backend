@@ -1,6 +1,11 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
+
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -8,7 +13,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -46,6 +54,37 @@ public class PlayerFacade {
     return searchForPlayers(search.getFirstName(), search.getLastName(), pageable);
   }
 
+  public BigDecimal playerPercentage(List<MentionResponse> mentions) {
+    SentimentCounter sentimentCounter = countPercentage(mentions);
+    if (sentimentCounter.getNegative().compareTo(ZERO) == 0) {
+      return new BigDecimal("100");
+    }
+
+    BigDecimal add = sentimentCounter.getPositive().add(sentimentCounter.getNegative());
+
+    return sentimentCounter.getPositive().divide(add, 2, RoundingMode.HALF_DOWN).multiply(new BigDecimal("100"));
+  }
+
+  private SentimentCounter countPercentage(List<MentionResponse> mentions) {
+    SentimentCounter sentimentCounter = new SentimentCounter();
+    for (MentionResponse response : mentions) {
+      switch (response.getMentionSentiment()) {
+        case NEUTRAL:
+          sentimentCounter.addNeutral();
+          break;
+        case NEGATIVE:
+          sentimentCounter.addNegative();
+          break;
+        case POSITIVE:
+          sentimentCounter.addPositive();
+          break;
+        default:
+      }
+    }
+
+    return sentimentCounter;
+  }
+
   private Page<Player> searchForPlayers(Optional<String> firstName, Optional<String> lastName, Pageable pageable) {
     if (firstAndLastNameIsPresent(firstName, lastName)) {
       log.info("Searching for PLAYER with firstName: {} and lastName: {}", firstName, lastName);
@@ -75,5 +114,24 @@ public class PlayerFacade {
 
   private boolean firstAndLastNameIsPresent(Optional<String> firstName, Optional<String> lastName) {
     return firstName.isPresent() && lastName.isPresent();
+  }
+
+  @Data
+  private static class SentimentCounter {
+    BigDecimal positive = ZERO;
+    BigDecimal negative = ZERO;
+    BigDecimal neutral = ZERO;
+
+    void addPositive() {
+      this.positive = this.positive.add(ONE);
+    }
+
+    void addNegative() {
+      this.negative = this.negative.add(ONE);
+    }
+
+    void addNeutral() {
+      this.neutral = this.neutral.add(ONE);
+    }
   }
 }

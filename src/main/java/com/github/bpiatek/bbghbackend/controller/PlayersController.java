@@ -1,17 +1,25 @@
 package com.github.bpiatek.bbghbackend.controller;
 
+import static java.util.stream.Collectors.toList;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
+import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.Player;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -21,12 +29,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/api/players")
+@RequiredArgsConstructor
 class PlayersController {
-  private final PlayerFacade playerFacade;
 
-  public PlayersController(PlayerFacade playerFacade) {
-    this.playerFacade = playerFacade;
-  }
+  private final PlayerFacade playerFacade;
+  private final MentionFacade mentionFacade;
 
   @ApiOperation(value = "Get player by ID")
   @ApiResponses(value = {
@@ -54,7 +61,21 @@ class PlayersController {
   })
   @ApiPageable
   @GetMapping("search")
-  Page<Player> findByName(@RequestParam String s, @ApiIgnore Pageable pageable) {
+  Page<Player> findByName(@RequestParam String s,  Pageable pageable) {
    return playerFacade.search(s, pageable);
+  }
+
+  @ApiOperation(value = "Get player mentions ratio")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved player's ratio"),
+  })
+  @ApiPageable
+  @GetMapping("{playerId}/ratio")
+  BigDecimal playerPercentage(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
+    List<MentionResponse> mentions = mentionFacade.findByPlayerId(playerId, pageable)
+        .get()
+        .collect(toList());
+
+    return playerFacade.playerPercentage(mentions);
   }
 }
