@@ -29,6 +29,9 @@ class NamesAndSurnamesProvider {
     log.info("Loading names and surnames into cache...");
     distinctLastNames = playerRepository.findDistinctLastNames();
     distinctFirstNames = playerRepository.findDistinctFirstNames();
-    log.info("Distinct names: {} and surnames: {} successfully loaded into cache", distinctFirstNames.size(), distinctLastNames.size());
+    log.info("Distinct names: {} and surnames: {} successfully loaded into cache",
+        distinctFirstNames.size(),
+        distinctLastNames.size()
+    );
   }
 }

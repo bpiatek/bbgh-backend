@@ -41,10 +41,10 @@ public class PlayerFacade {
   }
 
   public Page<Player> search(String text, Pageable pageable) {
+    log.debug("Searching for player: {}", text);
     final PlayerSearchResult search = playerSearcher.search(text);
     return searchForPlayers(search.getFirstName(), search.getLastName(), pageable);
   }
-
 
   private Page<Player> searchForPlayers(Optional<String> firstName, Optional<String> lastName, Pageable pageable) {
     if (firstAndLastNameIsPresent(firstName, lastName)) {
