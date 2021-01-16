@@ -66,6 +66,14 @@ public class MentionFacade {
     return mentionRepository.setMentionSentimentById(id, request.getMentionSentiment(), request.isHuman());
   }
 
+  public Page<MentionResponse> findByPlayerId(Long playerId, Pageable pageable) {
+    Page<Mention> mentionsByPlayerIdPageable = mentionRepository.findByPlayerIdIn(pageable, List.of(playerId));
+
+    return new PageImpl<>(toMentionResponseList(mentionsByPlayerIdPageable),
+                          mentionsByPlayerIdPageable.getPageable(),
+                          mentionsByPlayerIdPageable.getTotalElements());
+  }
+
   public Page<MentionResponse> findByPlayersName(String search, Pageable pageable) {
     final List<Player> players = playerFacade.search(search, pageable).stream().collect(toList());
     final List<Long> ids = players.stream()
@@ -78,17 +86,17 @@ public class MentionFacade {
     return new PageImpl<>(mentionResponses, mentionsPageable.getPageable(), mentionsPageable.getTotalElements());
   }
 
+  @Transactional
+  public void setManySentimentsForManyMentions(MassMentionsSentimentsRequest request) {
+    request.getItems()
+        .forEach(this::setSentimentForItem);
+  }
+
   private List<MentionResponse> toMentionResponseList(Page<Mention> mentions) {
     return mentions
         .get()
         .map(Mention::toMentionResponse)
         .collect(toList());
-  }
-
-  @Transactional
-  public void setManySentimentsForManyMentions(MassMentionsSentimentsRequest request) {
-    request.getItems()
-        .forEach(this::setSentimentForItem);
   }
 
   private void setSentimentForItem(MassMentionsSentimentsRequest.SpecificSentimentItem item) {

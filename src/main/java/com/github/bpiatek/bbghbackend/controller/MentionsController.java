@@ -71,6 +71,17 @@ class MentionsController {
     return mentionFacade.findByPlayersName(search, pageable);
   }
 
+  @GetMapping("player/{id}")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions by player id"),
+  })
+  @ApiPageable
+  Page<MentionResponse> findByPlayerId(@ApiIgnore Pageable pageable,
+                                       @PathVariable Long id) {
+
+    return mentionFacade.findByPlayerId(id, pageable);
+  }
+
   @ApiOperation(value = "Create mention.")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_201_Created, message = "Successfully created mention"),
