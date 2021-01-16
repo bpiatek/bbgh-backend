@@ -1,12 +1,10 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
-import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_DOWN;
 
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
 import com.github.bpiatek.bbghbackend.model.player.api.PlayerNotFoundException;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -49,26 +47,26 @@ public class PlayerFacade {
     return playerRepository.search(text, pageable);
   }
 
-  public BigDecimal playerPercentage(List<MentionResponse> mentions) {
+  public SentimentCounter playerPercentage(List<MentionResponse> mentions) {
     SentimentCounter sentimentCounter = populateSentimentCounter(mentions);
-    if (noMentions(sentimentCounter)) {
-      return new BigDecimal("-1");
-    }
-
-    if (noNegativeMentions(sentimentCounter)) {
-      return new BigDecimal("100");
+    if (noMentions(sentimentCounter) || noNegativeMentions(sentimentCounter)) {
+      return sentimentCounter;
     }
 
     BigDecimal positiveAndNegative = sentimentCounter.getPositive().add(sentimentCounter.getNegative());
 
     // (POSITIVE / (POSITIVE + NEGATIVE) ) * 100
-    return sentimentCounter.getPositive()
+    BigDecimal ratio = sentimentCounter.getPositive()
         .divide(positiveAndNegative, 2, HALF_DOWN)
         .multiply(new BigDecimal("100"));
+
+    sentimentCounter.setRatio(ratio);
+
+    return sentimentCounter;
   }
 
   private boolean noMentions(SentimentCounter sentimentCounter) {
-    return sentimentCounter.getNegative().add(sentimentCounter.positive).compareTo(ZERO) == 0;
+    return sentimentCounter.getNegative().add(sentimentCounter.getPositive()).compareTo(ZERO) == 0;
   }
 
   private boolean noNegativeMentions(SentimentCounter sentimentCounter) {
@@ -88,29 +86,13 @@ public class PlayerFacade {
         case POSITIVE:
           sentimentCounter.addPositive();
           break;
+        case NOT_CHECKED:
+          sentimentCounter.addNotChecked();
+          break;
         default:
       }
     }
 
     return sentimentCounter;
-  }
-
-  @Data
-  private static class SentimentCounter {
-    BigDecimal positive = ZERO;
-    BigDecimal negative = ZERO;
-    BigDecimal neutral = ZERO;
-
-    void addPositive() {
-      this.positive = this.positive.add(ONE);
-    }
-
-    void addNegative() {
-      this.negative = this.negative.add(ONE);
-    }
-
-    void addNeutral() {
-      this.neutral = this.neutral.add(ONE);
-    }
   }
 }
