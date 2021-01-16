@@ -9,6 +9,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Bartosz Piatek on 16/01/2021
@@ -20,18 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 class NamesAndSurnamesProvider {
 
-  private List<String> distinctFirstNames;
-  private List<String> distinctLastNames;
+  private List<String> distinctFullNames;
   private final PlayerRepository playerRepository;
 
   @EventListener
   public void afterApplicationStartup(ContextRefreshedEvent event) {
-    log.info("Loading names and surnames into cache...");
-    distinctLastNames = playerRepository.findDistinctLastNames();
-    distinctFirstNames = playerRepository.findDistinctFirstNames();
-    log.info("Distinct names: {} and surnames: {} successfully loaded into cache",
-        distinctFirstNames.size(),
-        distinctLastNames.size()
-    );
+    log.info("Loading distinct full names into cache...");
+    distinctFullNames = playerRepository.distinctFullNames()
+        .stream().map(s -> s.replace(',', ' '))
+        .collect(Collectors.toList());
+
+    log.info("Distinct full names: {} successfully loaded into cache",
+             distinctFullNames.size());
   }
 }

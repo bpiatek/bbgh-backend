@@ -19,7 +19,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Błażej Rybarkiewicz <b.rybarkiewicz@gmail.com>
@@ -61,7 +60,7 @@ class PlayersController {
   })
   @ApiPageable
   @GetMapping("search")
-  Page<Player> findByName(@RequestParam String s,  Pageable pageable) {
+  Page<Player> findByName(@RequestParam String s,  @ApiIgnore Pageable pageable) {
    return playerFacade.search(s, pageable);
   }
 

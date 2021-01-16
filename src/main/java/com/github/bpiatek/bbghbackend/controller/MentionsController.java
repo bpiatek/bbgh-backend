@@ -60,17 +60,6 @@ class MentionsController {
     return mentionFacade.search(predicate, pageable);
   }
 
-  @GetMapping("player")
-  @ApiResponses(value = {
-      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions for specified player"),
-  })
-  @ApiPageable
-  Page<MentionResponse> searchByPlayersFullName(@ApiIgnore Pageable pageable,
-                                                @RequestParam String search) {
-
-    return mentionFacade.findByPlayersName(search, pageable);
-  }
-
   @GetMapping("player/{id}")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all mentions by player id"),
