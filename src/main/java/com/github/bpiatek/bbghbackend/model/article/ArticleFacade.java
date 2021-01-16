@@ -54,8 +54,13 @@ public class ArticleFacade {
     }
   }
 
+  public Page<Article> findByPlayerId(Long playerId, Pageable pageable) {
+    log.info("Searching for ARTICLE by PLAYER_ID: {}", playerId);
+    return articleRepository.findAllByPlayerId(playerId, pageable);
+  }
+
   public List<Article> findByUrl(String url) {
-    log.debug("Searching for ARTICLE by URL: {}", url);
+    log.info("Searching for ARTICLE by URL: {}", url);
     return articleRepository.findByUrl(url);
   }
 
