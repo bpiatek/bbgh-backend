@@ -64,7 +64,6 @@ class PlayersController {
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved player's ratio"),
   })
-  @ApiPageable
   @GetMapping("{playerId}/ratio")
   SentimentCounter playerPercentage(@PathVariable Long playerId) {
     log.info("Calculating mentions ratio for Player: {}", playerId);
