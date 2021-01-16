@@ -1,17 +1,15 @@
 package com.github.bpiatek.bbghbackend.model.player;
 
+import static java.util.List.of;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,22 +19,43 @@ import java.util.Optional;
 class PlayerSearcherTest {
 
   @Mock
-  PlayerRepository playerRepository;
+  private static PlayerRepository playerRepository;
 
   @InjectMocks
-  PlayerSearcher playerSearcher;
+  private static PlayerSearcher playerSearcher;
+
+  @BeforeAll
+  static void setUp() {
+    NamesAndSurnamesProvider provider = new NamesAndSurnamesProvider(playerRepository);
+    provider.setDistinctFirstNames(of("Jan", "Kamil", "Wojciech"));
+    provider.setDistinctLastNames(of("Nowak", "Kowalski", "Mazurek"));
+    playerSearcher = new PlayerSearcher(provider);
+  }
 
   @Test
-  void test() {
+  void shouldFindLastName() {
     // given
-    List<String> distinctFirstNames = List.of("Jan", "Kamil", "Wojciech");
-    List<String> distinctLastNames = List.of("Nowak", "Kowalski", "Mazurek");
-    String lastName = "Nowak";
+    String expectedLastName = "Nowak";
 
     // when
-    final Optional<String> lastName1 = playerSearcher.getLastName(lastName);
+    PlayerSearchResult actualPlayer = playerSearcher.search(expectedLastName);
 
     // then
-    assertThat(true);
+    assertThat(actualPlayer.getLastName()).contains(expectedLastName);
+    assertThat(actualPlayer.getFirstName()).isEmpty();
   }
+
+  @Test
+  void shouldNotFindLastName() {
+    // given
+    String lastName = "NieMa";
+
+    // when
+    PlayerSearchResult actualPlayer = playerSearcher.search(lastName);
+
+    // then
+    assertThat(actualPlayer.getLastName()).isEmpty();
+    assertThat(actualPlayer.getFirstName()).isEmpty();
+  }
+
 }
