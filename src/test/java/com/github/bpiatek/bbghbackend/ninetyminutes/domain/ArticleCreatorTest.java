@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.List;
+
 /**
  * Created by Bartosz Piatek on 08/12/2020
  */

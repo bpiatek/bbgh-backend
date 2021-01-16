@@ -44,20 +44,23 @@ class PlayerSearcher {
     return searchForPlayers(firstName, lastName, pageable);
   }
 
-  private Optional<String> getFirstName(String text) {
+  Optional<String> getFirstName(String text) {
     return searchForNameOrSurname(text, distinctFirstNames);
   }
 
-  private Optional<String> getLastName(String text) {
+  Optional<String> getLastName(String text) {
     return searchForNameOrSurname(text, distinctLastNames);
   }
 
   private Optional<String> searchForNameOrSurname(String text, List<String> distinctNamesOrSurnames) {
     List<String> strings = of(text.trim().split(" "));
+    log.info("STRINGS: {}", strings);
     List<String> names = new ArrayList<>();
 
     for (String name : strings) {
+      log.info("NAME: {}", name);
       for (String s : distinctNamesOrSurnames) {
+        log.info("S: {}", s);
         if (s.equalsIgnoreCase(name)) {
           names.add(name);
         }
