@@ -3,9 +3,9 @@ package com.github.bpiatek.bbghbackend.controller;
 import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
+import com.github.bpiatek.bbghbackend.model.mention.api.SentimentCounter;
 import com.github.bpiatek.bbghbackend.model.player.Player;
 import com.github.bpiatek.bbghbackend.model.player.PlayerFacade;
-import com.github.bpiatek.bbghbackend.model.mention.api.SentimentCounter;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +67,7 @@ class PlayersController {
   @GetMapping("{playerId}/ratio")
   SentimentCounter playerPercentage(@PathVariable Long playerId) {
     log.info("Calculating mentions ratio for Player: {}", playerId);
-    final SentimentCounter sentimentCounter = mentionFacade.populateSentimentCounter(playerId);
-    return playerFacade.playerRatioPercentage(sentimentCounter);
+    SentimentCounter sentimentCounter = mentionFacade.populateSentimentCounter(playerId);
+    return playerFacade.calculatePlayerRatio(sentimentCounter);
   }
 }
