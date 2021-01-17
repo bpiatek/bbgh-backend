@@ -37,7 +37,6 @@ public class ArticleFacade {
   }
 
   public Article findById(Long id) {
-
     return articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
   }
 
@@ -60,7 +59,7 @@ public class ArticleFacade {
   }
 
   public List<Article> findByUrl(String url) {
-    log.info("Searching for ARTICLE by URL: {}", url);
+    log.debug("Searching for ARTICLE by URL: {}", url);
     return articleRepository.findByUrl(url);
   }
 
