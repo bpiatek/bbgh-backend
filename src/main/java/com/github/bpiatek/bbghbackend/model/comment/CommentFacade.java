@@ -4,6 +4,9 @@ import static java.util.stream.Collectors.toList;
 
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentNotFoundException;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
+import com.github.bpiatek.bbghbackend.model.mention.Mention;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -30,12 +33,21 @@ public class CommentFacade {
 
   public Page<CommentResponse> findByArticleId(Long articleId, Pageable pageable) {
     log.debug("Looking for COMMENTS by article ID: {}", articleId);
-    final Page<Comment> commentsPageable = commentRepository.findByArticleId(articleId, pageable);
+    final Page<Comment> commentsPage = commentRepository.findByArticleId(articleId, pageable);
 
-    final List<CommentResponse> comments = commentsPageable.get()
+    return new PageImpl<>(toCommentResponseList(commentsPage), commentsPage.getPageable(), commentsPage.getTotalElements());
+  }
+
+  public Page<CommentResponse> findAll(Pageable pageable) {
+    Page<Comment> mentionsPage = commentRepository.findAll(pageable);
+    List<CommentResponse> mentions = toCommentResponseList(mentionsPage);
+
+    return new PageImpl<>(mentions, mentionsPage.getPageable(), mentionsPage.getTotalElements());
+  }
+
+  private List<CommentResponse> toCommentResponseList(Page<Comment> commentsPage) {
+    return commentsPage.get()
         .map(Comment::toCommentResponse)
         .collect(toList());
-
-    return new PageImpl<>(comments, commentsPageable.getPageable(), commentsPageable.getTotalElements());
   }
 }
