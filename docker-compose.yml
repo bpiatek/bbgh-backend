@@ -11,7 +11,7 @@ services:
             - db
         environment:
             SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bbgh?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
-            SPRING_DATASOURCE_USERNAME: bbgh
+            SPRING_DATASOURCE_USERNAME: ${MYSQL_PASSWORD:-root}
             SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-bbgh}
         command: java -jar /app.jar
     db:
@@ -20,8 +20,6 @@ services:
             - "${DB_PORT:-3307}:3306"
         environment:
             MYSQL_DATABASE: bbgh
-            MYSQL_USER: bbgh
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-bbh}
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-bbgh}
         volumes:
             - db-data:/var/lib/mysql
