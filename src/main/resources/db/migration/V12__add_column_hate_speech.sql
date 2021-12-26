@@ -1,0 +1,1 @@
+ALTER TABLE comment ADD column is_hate_speech BOOL DEFAULT NULL NULL;

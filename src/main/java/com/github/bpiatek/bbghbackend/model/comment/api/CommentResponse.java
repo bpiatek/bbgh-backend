@@ -16,4 +16,5 @@ public class CommentResponse {
   LocalDateTime dateAdded;
   String content;
   Long articleId;
+  Boolean isHateSpeech;
 }
