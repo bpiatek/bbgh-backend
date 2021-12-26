@@ -1,14 +1,11 @@
 package com.github.bpiatek.bbghbackend.model.comment;
 
-import com.github.bpiatek.bbghbackend.model.article.Article;
-import com.github.bpiatek.bbghbackend.model.mention.Mention;
-import com.github.bpiatek.bbghbackend.model.mention.QMention;
-import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -21,4 +18,8 @@ interface CommentRepository extends Repository<Comment, Long> {
   Optional<Comment> findById(Long id);
 
   Page<Comment> findAll(Pageable pageable);
+
+  @Modifying
+  @Query("UPDATE Comment m SET m.isHateSpeech = :isHateSpeech WHERE m.id = :id")
+  int setMentionSentimentById(@Param("id") Long id, @Param("isHateSpeech") Boolean isHateSpeech);
 }

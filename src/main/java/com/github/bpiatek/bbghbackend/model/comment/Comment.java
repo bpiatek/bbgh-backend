@@ -33,6 +33,8 @@ public class Comment {
   @EqualsAndHashCode.Exclude
   private Article article;
 
+  private Boolean isHateSpeech;
+
   public Comment(String author, String content, LocalDateTime dateAdded) {
     this.author = author;
     this.content = content;
@@ -46,6 +48,7 @@ public class Comment {
         .content(this.content)
         .dateAdded(this.dateAdded)
         .articleId(this.article.getId())
+        .isHateSpeech(this.isHateSpeech)
         .build();
   }
 
@@ -56,6 +59,7 @@ public class Comment {
            ", author='" + author + '\'' +
            ", content='" + content + '\'' +
            ", dateAdded='" + dateAdded + '\'' +
+           ", isHateSpeech='" + isHateSpeech + '\'' +
            '}';
   }
 }

@@ -4,11 +4,13 @@ import static org.mortbay.jetty.HttpStatus.ORDINAL_200_OK;
 
 import com.github.bpiatek.bbghbackend.model.comment.Comment;
 import com.github.bpiatek.bbghbackend.model.comment.CommentFacade;
+import com.github.bpiatek.bbghbackend.model.comment.api.CommentIsHateSpeechRequest;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
 import com.github.bpiatek.bbghbackend.model.mention.Mention;
 import com.github.bpiatek.bbghbackend.model.mention.MentionFacade;
 import com.github.bpiatek.bbghbackend.model.mention.MentionSentiment;
 import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
+import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
 import com.github.bpiatek.bbghbackend.swagger.ApiPageable;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.*;
@@ -67,5 +69,16 @@ class CommentsController {
   @GetMapping("comments")
   Page<CommentResponse> getAllComments(@ApiIgnore Pageable pageable) {
     return commentFacade.findAll(pageable);
+  }
+
+  @ApiOperation(value = "Toggle if comment is hate speech or not")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully toggle is hate speech value"),
+  })
+  @PostMapping("comments/{commentId}/isHateSpeech")
+  ResponseEntity<Void> setMentionSentiment(@PathVariable Long commentId, @RequestBody CommentIsHateSpeechRequest request) {
+    commentFacade.setIsHateSpeech(commentId, request);
+
+    return ResponseEntity.ok().build();
   }
 }
