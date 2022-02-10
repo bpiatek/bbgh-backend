@@ -5,10 +5,6 @@ import static java.util.stream.Collectors.toList;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentIsHateSpeechRequest;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentNotFoundException;
 import com.github.bpiatek.bbghbackend.model.comment.api.CommentResponse;
-import com.github.bpiatek.bbghbackend.model.mention.Mention;
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionResponse;
-import com.github.bpiatek.bbghbackend.model.mention.api.MentionSentimentRequest;
-import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -56,6 +52,6 @@ public class CommentFacade {
 
   @Transactional
   public int setIsHateSpeech(Long id, CommentIsHateSpeechRequest request) {
-    return commentRepository.setMentionSentimentById(id, request.isHateSpeech());
+    return commentRepository.setMentionSentimentById(id, request.getIsHateSpeech());
   }
 }
