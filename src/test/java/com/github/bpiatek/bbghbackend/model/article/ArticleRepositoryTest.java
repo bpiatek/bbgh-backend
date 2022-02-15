@@ -47,19 +47,6 @@ class ArticleRepositoryTest {
     articleBundle.assertAll();
   }
 
-  @Test
-  void shouldCorrectlyRetrieveAllArticles() {
-    // given
-    final Article firstArticle = articleRepository.save(createArticle("First Content"));
-    final Article secondArticle = articleRepository.save(createArticle("Second Content"));
-
-    // when
-    final Page<Article> allArticles = articleRepository.findAll(PageRequest.of(0, 2));
-
-    // then
-    assertThat(allArticles).contains(firstArticle, secondArticle);
-  }
-
   private Article createArticle(String articleContent) {
     return Article.builder()
         .title(ARTICLE_TITLE)

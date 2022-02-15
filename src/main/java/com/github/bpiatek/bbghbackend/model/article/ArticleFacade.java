@@ -91,4 +91,8 @@ public class ArticleFacade {
     final LocalDateTime threeDaysAgo = LocalDateTime.now(clock).minusDays(daysBack);
     return articleRepository.findAllWithDateAfter(threeDaysAgo);
   }
+
+  public Page<Article> findArticlesAboutLechPoznan(Pageable pageable) {
+    return articleRepository.findArticlesAboutLechPoznan(pageable);
+  }
 }

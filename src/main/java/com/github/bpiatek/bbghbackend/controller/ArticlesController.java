@@ -34,7 +34,7 @@ class ArticlesController {
   private final ArticleFacade articleFacade;
   private final CommentFacade commentFacade;
 
-  @ApiOperation(value = "Get all articles")
+  @ApiOperation(value = "Search articles")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved all articles"),
   })
@@ -81,5 +81,14 @@ class ArticlesController {
   @GetMapping("player/{playerId}")
   Page<Article> findAllByPlayerId(@PathVariable Long playerId, @ApiIgnore Pageable pageable) {
     return articleFacade.findByPlayerId(playerId, pageable);
+  }
+
+  @ApiOperation(value = "Get articles about Lech Poznań")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved articles"),
+  })
+  @GetMapping("aboutLechPoznan")
+  Page<Article> findArticlesAboutLechPoznan(@ApiIgnore Pageable pageable) {
+    return articleFacade.findArticlesAboutLechPoznan(pageable);
   }
 }

@@ -19,6 +19,9 @@ interface ArticleRepository extends Repository<Article, Long> {
 
   Page<Article> findAll(Pageable pageable);
 
+  @Query(value = "SELECT * FROM article a WHERE (a.title LIKE '%Lech %' OR a.title LIKE '%Lecha%' OR a.title LIKE '%Lechem%')", nativeQuery = true)
+  Page<Article> findArticlesAboutLechPoznan(Pageable pagealbe);
+
   Page<Article> findAllByUpdatedAtAfter(Pageable pageable, LocalDateTime after);
 
   Page<Article> findAllByCreationDateAfter(Pageable pageable, LocalDateTime after);

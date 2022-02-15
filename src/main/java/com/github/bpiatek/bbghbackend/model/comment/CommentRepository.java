@@ -17,7 +17,6 @@ interface CommentRepository extends Repository<Comment, Long> {
 
   Optional<Comment> findById(Long id);
 
-  @Query(value = "SELECT * FROM comment c INNER JOIN article a ON a.id = c.article_id WHERE a.title LIKE '%Lech%' AND MOD(a.id, 25) = 0 AND a.id < 14000", nativeQuery = true)
   Page<Comment> findAll(Pageable pageable);
 
   @Modifying
