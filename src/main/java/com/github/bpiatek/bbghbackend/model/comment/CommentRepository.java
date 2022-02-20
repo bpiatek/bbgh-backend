@@ -17,8 +17,21 @@ interface CommentRepository extends Repository<Comment, Long> {
 
   Optional<Comment> findById(Long id);
 
-  @Query(value = "SELECT * FROM comment c INNER JOIN article a ON a.id = c.article_id WHERE a.title LIKE '%Lech%' AND MOD(a.id, 25) = 0 AND a.id < 14000", nativeQuery = true)
   Page<Comment> findAll(Pageable pageable);
+
+  @Query(nativeQuery = true,
+      value = "" +
+        "SELECT DISTINCT comment.* " +
+        "FROM comment JOIN mention m ON comment.id = m.comment_id " +
+        "WHERE sentiment_marked_by_human = 1 " +
+        "AND sentiment = 'NEGATIVE'",
+      countQuery = "" +
+        "SELECT COUNT(DISTINCT comment.id)" +
+        "FROM comment JOIN mention m ON comment.id = m.comment_id " +
+        "WHERE sentiment_marked_by_human = 1 " +
+        "AND sentiment = 'NEGATIVE'"
+  )
+  Page<Comment> findWithNegativeMentionsMarkedByHuman(Pageable pageable);
 
   @Modifying
   @Query("UPDATE Comment m SET m.isHateSpeech = :isHateSpeech WHERE m.id = :id")

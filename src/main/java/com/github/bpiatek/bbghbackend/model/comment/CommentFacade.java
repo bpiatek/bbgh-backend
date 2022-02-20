@@ -32,16 +32,21 @@ public class CommentFacade {
 
   public Page<CommentResponse> findByArticleId(Long articleId, Pageable pageable) {
     log.debug("Looking for COMMENTS by article ID: {}", articleId);
-    final Page<Comment> commentsPage = commentRepository.findByArticleId(articleId, pageable);
-
-    return new PageImpl<>(toCommentResponseList(commentsPage), commentsPage.getPageable(), commentsPage.getTotalElements());
+    return toCommentResponsePage(commentRepository.findByArticleId(articleId, pageable));
   }
 
   public Page<CommentResponse> findAll(Pageable pageable) {
-    Page<Comment> mentionsPage = commentRepository.findAll(pageable);
-    List<CommentResponse> mentions = toCommentResponseList(mentionsPage);
+    return toCommentResponsePage(commentRepository.findAll(pageable));
+  }
 
-    return new PageImpl<>(mentions, mentionsPage.getPageable(), mentionsPage.getTotalElements());
+  public Page<CommentResponse> findWithNegativeMentionsMarkedByHuman(Pageable pageable) {
+    return toCommentResponsePage(commentRepository.findWithNegativeMentionsMarkedByHuman(pageable));
+  }
+
+  private PageImpl<CommentResponse> toCommentResponsePage(Page<Comment> commentsPage) {
+    List<CommentResponse> commentResponseList = toCommentResponseList(commentsPage);
+
+    return new PageImpl<>(commentResponseList, commentsPage.getPageable(), commentsPage.getTotalElements());
   }
 
   private List<CommentResponse> toCommentResponseList(Page<Comment> commentsPage) {

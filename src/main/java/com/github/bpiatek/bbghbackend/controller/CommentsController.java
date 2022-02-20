@@ -64,6 +64,16 @@ class CommentsController {
     return commentFacade.findAll(pageable);
   }
 
+  @ApiOperation(value = "Get comments with negative mention marked by human")
+  @ApiResponses(value = {
+      @ApiResponse(code = ORDINAL_200_OK, message = "Successfully retrieved relative comments"),
+  })
+  @ApiPageable
+  @GetMapping("comments/withNegativeMentionMarkedByHuman")
+  Page<CommentResponse> getCommentsWithNegativeMentionMarkedByHuman(@ApiIgnore Pageable pageable) {
+    return commentFacade.findWithNegativeMentionsMarkedByHuman(pageable);
+  }
+
   @ApiOperation(value = "Toggle if comment is hate speech or not")
   @ApiResponses(value = {
       @ApiResponse(code = ORDINAL_200_OK, message = "Successfully toggle is hate speech value"),
